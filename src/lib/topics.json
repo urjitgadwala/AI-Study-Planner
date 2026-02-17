@@ -1,0 +1,331 @@
+[
+  {
+    "id": "p1",
+    "name": "Units and Measurements",
+    "subject": "Physics",
+    "weightage": 3,
+    "parentSubject": "Physics"
+  },
+  {
+    "id": "p2",
+    "name": "Kinematics",
+    "subject": "Physics",
+    "weightage": 5,
+    "parentSubject": "Physics"
+  },
+  {
+    "id": "p3",
+    "name": "Laws of Motion",
+    "subject": "Physics",
+    "weightage": 6,
+    "parentSubject": "Physics"
+  },
+  {
+    "id": "p4",
+    "name": "Work, Power and Energy",
+    "subject": "Physics",
+    "weightage": 5,
+    "parentSubject": "Physics"
+  },
+  {
+    "id": "p5",
+    "name": "Rotational Mechanics",
+    "subject": "Physics",
+    "weightage": 8,
+    "parentSubject": "Physics"
+  },
+  {
+    "id": "p6",
+    "name": "Gravitation",
+    "subject": "Physics",
+    "weightage": 4,
+    "parentSubject": "Physics"
+  },
+  {
+    "id": "p7",
+    "name": "Properties of Matter",
+    "subject": "Physics",
+    "weightage": 5,
+    "parentSubject": "Physics"
+  },
+  {
+    "id": "p8",
+    "name": "Thermodynamics",
+    "subject": "Physics",
+    "weightage": 9,
+    "parentSubject": "Physics"
+  },
+  {
+    "id": "p9",
+    "name": "Oscillations and Waves",
+    "subject": "Physics",
+    "weightage": 7,
+    "parentSubject": "Physics"
+  },
+  {
+    "id": "p10",
+    "name": "Electrostatics",
+    "subject": "Physics",
+    "weightage": 7,
+    "parentSubject": "Physics"
+  },
+  {
+    "id": "p11",
+    "name": "Current Electricity",
+    "subject": "Physics",
+    "weightage": 8,
+    "parentSubject": "Physics"
+  },
+  {
+    "id": "p12",
+    "name": "Magnetism",
+    "subject": "Physics",
+    "weightage": 6,
+    "parentSubject": "Physics"
+  },
+  {
+    "id": "p13",
+    "name": "Electromagnetic Induction",
+    "subject": "Physics",
+    "weightage": 5,
+    "parentSubject": "Physics"
+  },
+  {
+    "id": "p14",
+    "name": "Optics",
+    "subject": "Physics",
+    "weightage": 8,
+    "parentSubject": "Physics"
+  },
+  {
+    "id": "p15",
+    "name": "Modern Physics",
+    "subject": "Physics",
+    "weightage": 10,
+    "parentSubject": "Physics"
+  },
+  {
+    "id": "p16",
+    "name": "Electronic Devices",
+    "subject": "Physics",
+    "weightage": 4,
+    "parentSubject": "Physics"
+  },
+  {
+    "id": "c1",
+    "name": "Some Basic Concepts",
+    "subject": "Chemistry",
+    "weightage": 4,
+    "parentSubject": "Chemistry"
+  },
+  {
+    "id": "c2",
+    "name": "Structure of Atom",
+    "subject": "Chemistry",
+    "weightage": 5,
+    "parentSubject": "Chemistry"
+  },
+  {
+    "id": "c3",
+    "name": "Chemical Bonding",
+    "subject": "Chemistry",
+    "weightage": 9,
+    "parentSubject": "Chemistry"
+  },
+  {
+    "id": "c4",
+    "name": "Chemical Thermodynamics",
+    "subject": "Chemistry",
+    "weightage": 6,
+    "parentSubject": "Chemistry"
+  },
+  {
+    "id": "c5",
+    "name": "Solutions",
+    "subject": "Chemistry",
+    "weightage": 5,
+    "parentSubject": "Chemistry"
+  },
+  {
+    "id": "c6",
+    "name": "Equilibrium",
+    "subject": "Chemistry",
+    "weightage": 7,
+    "parentSubject": "Chemistry"
+  },
+  {
+    "id": "c7",
+    "name": "Redox Reactions",
+    "subject": "Chemistry",
+    "weightage": 3,
+    "parentSubject": "Chemistry"
+  },
+  {
+    "id": "c8",
+    "name": "Chemical Kinetics",
+    "subject": "Chemistry",
+    "weightage": 5,
+    "parentSubject": "Chemistry"
+  },
+  {
+    "id": "c9",
+    "name": "Surface Chemistry",
+    "subject": "Chemistry",
+    "weightage": 4,
+    "parentSubject": "Chemistry"
+  },
+  {
+    "id": "c10",
+    "name": "Inorganic Chemistry: p-Block",
+    "subject": "Chemistry",
+    "weightage": 8,
+    "parentSubject": "Chemistry"
+  },
+  {
+    "id": "c11",
+    "name": "d and f Block Elements",
+    "subject": "Chemistry",
+    "weightage": 5,
+    "parentSubject": "Chemistry"
+  },
+  {
+    "id": "c12",
+    "name": "Coordination Compounds",
+    "subject": "Chemistry",
+    "weightage": 7,
+    "parentSubject": "Chemistry"
+  },
+  {
+    "id": "c13",
+    "name": "General Organic Chemistry",
+    "subject": "Chemistry",
+    "weightage": 10,
+    "parentSubject": "Chemistry"
+  },
+  {
+    "id": "c14",
+    "name": "Hydrocarbons",
+    "subject": "Chemistry",
+    "weightage": 6,
+    "parentSubject": "Chemistry"
+  },
+  {
+    "id": "c15",
+    "name": "Oxygen Containing Compounds",
+    "subject": "Chemistry",
+    "weightage": 8,
+    "parentSubject": "Chemistry"
+  },
+  {
+    "id": "c16",
+    "name": "Biomolecules and Polymers",
+    "subject": "Chemistry",
+    "weightage": 4,
+    "parentSubject": "Chemistry"
+  },
+  {
+    "id": "m1",
+    "name": "Sets and Functions",
+    "subject": "Math",
+    "weightage": 5,
+    "parentSubject": "Math"
+  },
+  {
+    "id": "m2",
+    "name": "Complex Numbers",
+    "subject": "Math",
+    "weightage": 6,
+    "parentSubject": "Math"
+  },
+  {
+    "id": "m3",
+    "name": "Matrices and Determinants",
+    "subject": "Math",
+    "weightage": 8,
+    "parentSubject": "Math"
+  },
+  {
+    "id": "m4",
+    "name": "Permutations and Combinations",
+    "subject": "Math",
+    "weightage": 4,
+    "parentSubject": "Math"
+  },
+  {
+    "id": "m5",
+    "name": "Binomial Theorem",
+    "subject": "Math",
+    "weightage": 3,
+    "parentSubject": "Math"
+  },
+  {
+    "id": "m6",
+    "name": "Sequences and Series",
+    "subject": "Math",
+    "weightage": 5,
+    "parentSubject": "Math"
+  },
+  {
+    "id": "m7",
+    "name": "Limits and Continuity",
+    "subject": "Math",
+    "weightage": 6,
+    "parentSubject": "Math"
+  },
+  {
+    "id": "m8",
+    "name": "Differentiation",
+    "subject": "Math",
+    "weightage": 7,
+    "parentSubject": "Math"
+  },
+  {
+    "id": "m9",
+    "name": "Integral Calculus",
+    "subject": "Math",
+    "weightage": 10,
+    "parentSubject": "Math"
+  },
+  {
+    "id": "m10",
+    "name": "Differential Equations",
+    "subject": "Math",
+    "weightage": 5,
+    "parentSubject": "Math"
+  },
+  {
+    "id": "m11",
+    "name": "Coordinate Geometry",
+    "subject": "Math",
+    "weightage": 9,
+    "parentSubject": "Math"
+  },
+  {
+    "id": "m12",
+    "name": "Three Dimensional Geometry",
+    "subject": "Math",
+    "weightage": 7,
+    "parentSubject": "Math"
+  },
+  {
+    "id": "m13",
+    "name": "Vector Algebra",
+    "subject": "Math",
+    "weightage": 6,
+    "parentSubject": "Math"
+  },
+  {
+    "id": "m14",
+    "name": "Statistics and Probability",
+    "subject": "Math",
+    "weightage": 7,
+    "parentSubject": "Math"
+  },
+  {
+    "id": "m15",
+    "name": "Trigonometry",
+    "subject": "Math",
+    "weightage": 6,
+    "parentSubject": "Math"
+  }
+]
