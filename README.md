@@ -89,4 +89,4 @@ We welcome contributions! Whether it's adding new JEE topics, improving the AI p
 Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
-*Built with ❤️ by Urjit Gadwala & Antigravity (Google Deepmind)*
+*Built by Urjit Gadwala *
