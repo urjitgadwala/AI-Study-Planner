@@ -1,5 +1,5 @@
 /**
- * Gemini API integration for JEE Master
+ * Analytical Engine integration for JEE Master
  */
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Topic } from './types';
@@ -10,32 +10,90 @@ export interface AnalysisResult {
     categories: Record<string, 'Silly' | 'Conceptual' | 'Time Pressure'>;
 }
 
-const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY || "";
+export interface DiagnosticQuestion {
+    id: string;
+    text: string;
+    type: 'choice' | 'text';
+    options?: string[];
+    correctAnswer?: string;
+}
+
+export interface AssessmentResult {
+    tier: number;
+    feedback: string;
+    strengths: string[];
+    weaknesses: string[];
+}
+
+const API_KEY = process.env.NEXT_PUBLIC_ANALYTICS_KEY || "";
 const genAI = API_KEY ? new GoogleGenerativeAI(API_KEY) : null;
+
+/**
+ * Robust runner for AI calls with multi-model retries
+ */
+async function runWithRetry<T>(
+    fn: (model: any) => Promise<T>,
+    fallback: T,
+    context: string
+): Promise<T> {
+    if (!genAI) {
+        console.warn(`AI API Key missing for ${context}. Falling back to mock data.`);
+        return fallback;
+    }
+
+    // Comprehensive list of models to try, ordered by likelihood of support in 2026
+    const modelsToTry = [
+        "gemini-2.5-flash",
+        "gemini-2.0-flash",
+        "gemini-1.5-flash",
+        "gemini-1.5-flash-latest",
+        "gemini-1.5-flash-8b",
+        "gemini-pro",
+        "gemini-1.5-pro"
+    ];
+
+    let lastError = null;
+
+    for (const modelId of modelsToTry) {
+        // Try v1beta first as it's often more permissive for experimental/flash models
+        const apiVersions = ["v1beta", "v1"];
+
+        for (const apiVer of apiVersions) {
+            try {
+                const model = genAI.getGenerativeModel({ model: modelId }, { apiVersion: apiVer });
+                const result = await fn(model);
+                console.info(`✅ Success using ${modelId} (${apiVer}) for ${context}`);
+                return result;
+            } catch (err) {
+                lastError = err;
+                // Only log if it's not a 404 (discovery is expected to hit 404s)
+                const errorText = err instanceof Error ? err.message : String(err);
+                if (!errorText.includes("404")) {
+                    console.warn(`⚠️ ${context} error with ${modelId} (${apiVer}): ${errorText.substring(0, 100)}...`);
+                }
+                continue;
+            }
+        }
+    }
+
+    console.warn(`🔥 ${context} all AI paths failed. Using safety fallback.`, lastError);
+    return fallback;
+}
 
 export async function analyzeTestPerformance(
     testData: any,
     answers: Record<string, string>
 ): Promise<AnalysisResult> {
-    if (!genAI) {
-        console.warn("Gemini API Key missing. Falling back to mock analysis.");
-        // Simulating API Latency
-        await new Promise(resolve => setTimeout(resolve, 1500));
+    const mockSilly = Object.values(answers).filter(v => v === 'Silly').length;
+    const mockConceptual = Object.values(answers).filter(v => v === 'Conceptual').length;
 
-        // Mock analysis logic based on self-reported categories
-        const mockSilly = Object.values(answers).filter(v => v === 'Silly').length;
-        const mockConceptual = Object.values(answers).filter(v => v === 'Conceptual').length;
+    const fallback: AnalysisResult = {
+        summary: `(MOCK) You had ${mockSilly} silly errors and ${mockConceptual} conceptual gaps.`,
+        advice: "The AI is currently setting up. Review your mistakes to identify conceptual gaps!",
+        categories: answers as any
+    };
 
-        return {
-            summary: `(MOCK) You had ${mockSilly} silly errors and ${mockConceptual} conceptual gaps.`,
-            advice: "Please add your NEXT_PUBLIC_GEMINI_API_KEY to .env to see real AI-powered insights!",
-            categories: answers as any
-        };
-    }
-
-    try {
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-
+    return runWithRetry(async (model) => {
         const prompt = `
             Analyze this JEE preparation test result and provide study advice.
             Test Data: ${JSON.stringify(testData)}
@@ -50,38 +108,17 @@ export async function analyzeTestPerformance(
         `;
 
         const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const text = response.text();
-
-        // Clean up JSON if LLM returned markdown
+        const text = (await result.response).text();
         const cleanText = text.replace(/```json|```/g, "").trim();
         return JSON.parse(cleanText);
-    } catch (error) {
-        console.error("Gemini Analysis Error:", error);
-        return {
-            summary: "Error connecting to Gemini API.",
-            advice: "Check your API key and network connection.",
-            categories: answers as any
-        };
-    }
+    }, fallback, "Analyze Performance");
 }
 
 export async function parseSyllabusFromText(text: string): Promise<Topic[]> {
-    if (!genAI) {
-        console.warn("Gemini API Key missing. Mocking syllabus extraction.");
-        return [
-            { id: `u_${Math.random().toString(36).substr(2, 9)}`, name: "Mock Physics Topic", subject: "Physics", weightage: 5, parentSubject: "Physics" },
-            { id: `u_${Math.random().toString(36).substr(2, 9)}`, name: "Mock Chemistry Topic", subject: "Chemistry", weightage: 5, parentSubject: "Chemistry" }
-        ];
-    }
-
-    try {
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-
+    return runWithRetry(async (model) => {
         const prompt = `
             Extract a list of specific syllabus topics from the following text.
             Categorize each topic into "Physics", "Chemistry", or "Math".
-            Ignore introductory text, headers, and copyright info. Focus only on the actual academic topics.
             
             Return ONLY a valid JSON array of objects with this structure:
             [
@@ -89,23 +126,75 @@ export async function parseSyllabusFromText(text: string): Promise<Topic[]> {
             ]
             
             Text to parse:
-            ${text.substring(0, 10000)} // Limit text length for prompt limits
+            ${text.substring(0, 5000)}
         `;
 
         const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const responseText = response.text();
-
+        const responseText = (await result.response).text();
         const cleanText = responseText.replace(/```json|```/g, "").trim();
         const parsed = JSON.parse(cleanText);
 
-        // Ensure unique IDs
         return parsed.map((t: any) => ({
             ...t,
             id: `u_${Math.random().toString(36).substr(2, 9)}`
         }));
-    } catch (error) {
-        console.error("Syllabus Parsing Error:", error);
-        return [];
-    }
+    }, [], "Parse Syllabus");
 }
+
+export async function generateDiagnosticQuestions(topicName: string): Promise<DiagnosticQuestion[]> {
+    const fallback: DiagnosticQuestion[] = [
+        { id: 'f1', text: `Briefly explain the physical significance of ${topicName}.`, type: 'text' },
+        { id: 'f2', text: `Which sub-concept of ${topicName} do you find most challenging?`, type: 'choice', options: ['Theoretical Foundations', 'Numerical Application', 'Interdisciplinary Links', 'Formula Derivation'] },
+        { id: 'f3', text: `On a scale of 1-4, how confident are you with JEE Advanced level problems in ${topicName}?`, type: 'choice', options: ['1 - Basics only', '2 - Average', '3 - Above average', '4 - Expert'] },
+        { id: 'f4', text: `Provide a quick summary of your current progress in ${topicName}.`, type: 'text' }
+    ];
+
+    return runWithRetry(async (model) => {
+        const prompt = `
+            Generate 5 diagnostic questions for a JEE aspirant to assess their mastery of the topic: "${topicName}".
+            Return ONLY a JSON array:
+            [
+                { "id": "q1", "text": "Question?", "type": "choice", "options": ["A", "B", "C", "D"], "correctAnswer": "A" },
+                { "id": "q2", "text": "Question?", "type": "text" }
+            ]
+        `;
+
+        const result = await model.generateContent(prompt);
+        const text = (await result.response).text();
+        const cleanText = text.replace(/```json|```/g, "").trim();
+        return JSON.parse(cleanText);
+    }, fallback, "Generate Questions");
+}
+
+export async function evaluateDiagnosticPerformance(
+    topicName: string,
+    answers: Record<string, string>
+): Promise<AssessmentResult> {
+    const fallback: AssessmentResult = {
+        tier: 2,
+        feedback: "We recommend starting with Tier 2 study materials to solidify your foundations.",
+        strengths: ["Diagnostic Completed"],
+        weaknesses: ["AI Evaluation Offline"]
+    };
+
+    return runWithRetry(async (model) => {
+        const prompt = `
+            Evaluate these student answers for the topic: "${topicName}".
+            Student Answers: ${JSON.stringify(answers)}
+            
+            Return ONLY a JSON object:
+            {
+                "tier": 3,
+                "feedback": "Overall assessment",
+                "strengths": ["list"],
+                "weaknesses": ["list"]
+            }
+        `;
+
+        const result = await model.generateContent(prompt);
+        const text = (await result.response).text();
+        const cleanText = text.replace(/```json|```/g, "").trim();
+        return JSON.parse(cleanText);
+    }, fallback, "Evaluate Performance");
+}
+

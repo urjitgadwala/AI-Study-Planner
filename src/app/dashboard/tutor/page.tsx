@@ -36,7 +36,7 @@ export default function TutorPage() {
                 </div>
                 <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-secondary rounded-xl text-sm font-bold text-muted-foreground">
                     <Sparkles className="w-4 h-4 text-primary" />
-                    Powered by Gemini 1.5 Pro
+                    Powered by IDEA Engine
                 </div>
             </header>
 

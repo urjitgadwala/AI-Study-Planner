@@ -89,8 +89,8 @@ export default function TestInterface({ test, onComplete, onCancel }: TestInterf
                 <div className="max-w-2xl w-full">
                     <div className="mb-8">
                         <span className={`text-xs font-bold px-3 py-1 rounded-full mb-4 inline-block ${q.subject === 'Physics' ? 'bg-blue-900/40 text-blue-300' :
-                                q.subject === 'Chemistry' ? 'bg-orange-900/40 text-orange-300' :
-                                    'bg-purple-900/40 text-purple-300'
+                            q.subject === 'Chemistry' ? 'bg-orange-900/40 text-orange-300' :
+                                'bg-purple-900/40 text-purple-300'
                             }`}>
                             {q.subject} • Tier {q.difficulty}
                         </span>
@@ -99,7 +99,7 @@ export default function TestInterface({ test, onComplete, onCancel }: TestInterf
                             <span className="text-indigo-400">{q.topicName}</span>
                         </h3>
                         <p className="mt-4 text-slate-400 italic">
-                            (In a real version, we would fetch a dynamic question from a database or Gemini here.)
+                            (In a real version, we would fetch a dynamic question from a database or AI Engine here.)
                         </p>
                     </div>
 
@@ -126,8 +126,8 @@ export default function TestInterface({ test, onComplete, onCancel }: TestInterf
                                     key={btn.id}
                                     onClick={() => handleAnswer(btn.id as any)}
                                     className={`p-4 rounded-xl border-2 transition-all font-bold text-center text-sm ${answers[q.id] === btn.id
-                                            ? `bg-${btn.color}-500/10 border-${btn.color}-500 text-${btn.color}-400`
-                                            : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600'
+                                        ? `bg-${btn.color}-500/10 border-${btn.color}-500 text-${btn.color}-400`
+                                        : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600'
                                         }`}
                                 >
                                     {btn.label}

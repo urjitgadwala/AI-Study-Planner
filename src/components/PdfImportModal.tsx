@@ -99,7 +99,7 @@ export default function PdfImportModal({ onTopicsAdded, onCancel }: PdfImportMod
                     <div className="py-20 text-center">
                         <div className="inline-block w-16 h-16 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin mb-6"></div>
                         <h3 className="text-xl font-bold text-slate-800 animate-pulse">
-                            {status === 'extracting' ? 'Extracting Text...' : 'Gemini is Analyzing Syllabus...'}
+                            {status === 'extracting' ? 'Extracting Text...' : 'AI Engine is Analyzing Syllabus...'}
                         </h3>
                         <p className="text-sm text-slate-400 mt-2">This may take a few seconds depending on PDF size.</p>
                     </div>
@@ -138,8 +138,8 @@ export default function PdfImportModal({ onTopicsAdded, onCancel }: PdfImportMod
                                 <div key={idx} className="p-3 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center text-sm">
                                     <span className="font-bold text-slate-700 truncate mr-2">{t.name}</span>
                                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${t.subject === 'Physics' ? 'bg-blue-100 text-blue-600' :
-                                            t.subject === 'Chemistry' ? 'bg-orange-100 text-orange-600' :
-                                                'bg-purple-100 text-purple-600'
+                                        t.subject === 'Chemistry' ? 'bg-orange-100 text-orange-600' :
+                                            'bg-purple-100 text-purple-600'
                                         }`}>
                                         {t.subject}
                                     </span>

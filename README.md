@@ -6,7 +6,7 @@
 
 ## ✨ Core Features
 
-- **🤖 Global AI Tutor**: A persistent Gemini 1.5-powered assistant available across the entire dashboard to answer quick questions or provide deep dives into complex JEE topics.
+- **🤖 Global AI Tutor**: A persistent AI-powered assistant available across the entire dashboard to answer quick questions or provide deep dives into complex JEE topics.
 - **📥 Intelligent Syllabus Management**:
     - **PDF Import**: Upload syllabus PDFs and let AI automatically extract and categorize topics.
     - **Bulk Management**: Easily add or delete topics manually or in batches.
@@ -18,7 +18,7 @@
 
 - **Framework**: [Next.js 15 (App Router)](https://nextjs.org/)
 - **UI & Styling**: [Tailwind CSS 4](https://tailwindcss.com/), [Lucide React](https://lucide.dev/), [Next-Themes](https://github.com/pacocoursey/next-themes)
-- **AI Core**: [Google Gemini 1.5 Flash/Pro](https://ai.google.dev/)
+- **AI Core**: [Advanced Analytical & Chat Engines](https://ai.google.dev/)
 - **Authentication**: [NextAuth.js](https://next-auth.js.org/)
 - **PDF Processing**: [PDF.js](https://mozilla.github.io/pdf.js/)
 - **State Management**: Local & Hook-based sync with persistent mock DB
@@ -29,7 +29,7 @@
 
 - Node.js 18+ 
 - NPM or Yarn
-- A Google AI (Gemini) API Key
+- An AI Service API Key (e.g., Gemini, Groq)
 
 ### Installation
 
@@ -47,7 +47,8 @@
 3. **Configure Environment Variables**:
    Create a `.env` file in the root directory and add your keys:
    ```env
-   NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key_here
+    NEXT_PUBLIC_ANALYTICS_KEY=your_key
+    NEXT_PUBLIC_CHAT_KEY=your_key
    NEXTAUTH_SECRET=your_nextauth_secret
    # If using Google Auth:
    GOOGLE_CLIENT_ID=your_id

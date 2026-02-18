@@ -96,7 +96,7 @@ export default function LandingPage() {
                             },
                             {
                                 title: "AI Chat Assistant",
-                                desc: "Stuck on a concept? Your personalized Gemini-powered tutor is here to help 24/7.",
+                                desc: "Stuck on a concept? Your personalized AI-powered tutor is here to help 24/7.",
                                 icon: (
                                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />

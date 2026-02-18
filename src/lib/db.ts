@@ -1,5 +1,5 @@
 import topicsData from './topics.json';
-import { Topic, StudentMastery, FocusLog, Assessment, UserProfile } from './types';
+import { Topic, StudentMastery, FocusLog, Assessment, UserProfile, ChatMessage } from './types';
 
 // For the initial MVP, we will use individual localStorage keys or a unified JSON object.
 // This mock DB handler provides an abstraction layer for later migration to Supabase/PostgreSQL.
@@ -125,5 +125,17 @@ export const db = {
         const newResults = [...results, result];
         const key = getScopedKey('je_master_test_results', userId);
         localStorage.setItem(key, JSON.stringify(newResults));
+    },
+
+    getChatHistory: (userId?: string): ChatMessage[] => {
+        if (typeof window === 'undefined') return [];
+        const key = getScopedKey('je_master_chat_history', userId);
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : [];
+    },
+
+    saveChatHistory: (messages: ChatMessage[], userId?: string) => {
+        const key = getScopedKey('je_master_chat_history', userId);
+        localStorage.setItem(key, JSON.stringify(messages));
     }
 };

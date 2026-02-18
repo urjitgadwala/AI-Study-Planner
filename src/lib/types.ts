@@ -38,6 +38,7 @@ export interface Assessment {
   }[];
 }
 
+
 export interface UserProfile {
   id: string;
   name?: string;
@@ -52,4 +53,9 @@ export interface UserProfile {
   lastLogin: string;
   badges: string[];
   activeStreak: boolean;
+}
+
+export interface ChatMessage {
+  role: 'user' | 'model';
+  text: string;
 }

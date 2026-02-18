@@ -1,14 +1,11 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { Topic, StudentMastery } from '@/lib/types';
-import { Send, X, Bot, Sparkles } from 'lucide-react';
-
-interface Message {
-    role: 'user' | 'model';
-    text: string;
-}
+import { Topic, StudentMastery, ChatMessage } from '@/lib/types';
+import { db } from '@/lib/db';
+import { useSession } from 'next-auth/react';
+import { chatWithIdeaEngine } from "@/lib/groq";
+import { Send, X, Bot, Sparkles, RotateCcw } from 'lucide-react';
 
 interface GeminiChatProps {
     topics: Topic[];
@@ -17,17 +14,34 @@ interface GeminiChatProps {
 }
 
 export default function GeminiChat({ topics, mastery, mode = 'floating' }: GeminiChatProps) {
+    const { data: session } = useSession();
+    const userId = session?.user?.email || 'default_user';
     const [isOpen, setIsOpen] = useState(mode === 'inline');
-    const [messages, setMessages] = useState<Message[]>([
-        { role: 'model', text: "Hello! I'm your Gemini Master. How can I help you with your JEE preparation today?" }
-    ]);
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const chatEndRef = useRef<HTMLDivElement>(null);
 
-    const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY || "";
-    const genAI = API_KEY ? new GoogleGenerativeAI(API_KEY) : null;
+    // Initial Load
+    useEffect(() => {
+        const history = db.getChatHistory(userId);
+        if (history.length > 0) {
+            setMessages(history);
+        } else {
+            setMessages([
+                { role: 'model', text: "Hello! I'm IDEA Master. How can I help you with your JEE preparation today?" }
+            ]);
+        }
+    }, [userId]);
 
+    // Save on change
+    useEffect(() => {
+        if (messages.length > 0) {
+            db.saveChatHistory(messages, userId);
+        }
+    }, [messages, userId]);
+
+    // Auto scroll
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
@@ -35,6 +49,14 @@ export default function GeminiChat({ topics, mastery, mode = 'floating' }: Gemin
     useEffect(() => {
         if (mode === 'inline') setIsOpen(true);
     }, [mode]);
+
+    const handleClear = () => {
+        if (window.confirm("Are you sure you want to clear your chat history?")) {
+            const initialMessage: ChatMessage[] = [{ role: 'model', text: "Hello! I'm IDEA Master. How can I help you with your JEE preparation today?" }];
+            setMessages(initialMessage);
+            db.saveChatHistory(initialMessage, userId);
+        }
+    };
 
     const handleSend = async () => {
         if (!input.trim() || isLoading) return;
@@ -44,37 +66,19 @@ export default function GeminiChat({ topics, mastery, mode = 'floating' }: Gemin
         setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
         setIsLoading(true);
 
-        if (!genAI) {
-            setTimeout(() => {
-                setMessages(prev => [...prev, { role: 'model', text: "API Key is missing. I'm in mock mode! That's a great question, but I need a key to give you a real answer." }]);
-                setIsLoading(false);
-            }, 1000);
-            return;
-        }
-
         try {
-            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
             const masteredTopics = topics.filter(t => mastery.find(m => m.topicId === t.id && m.isCompleted));
-
-            const fullPrompt = `
-                Context: You are Gemini Master, a helpful JEE preparation assistant.
+            const context = `
+                Role: Helpful JEE preparation assistant.
                 Student Mastery: ${masteredTopics.length > 0 ? masteredTopics.map(t => t.name).join(', ') : 'No topics mastered yet'}.
                 Database Context: There are ${topics.length} total topics available.
-                
-                Student Question: ${userMessage}
-                
-                Please provide concise, expert JEE guidance.
             `;
 
-            const result = await model.generateContent(fullPrompt);
-            const response = await result.response;
-            const responseText = response.text();
-
-            if (!responseText) throw new Error("Empty response");
+            const responseText = await chatWithIdeaEngine(userMessage, messages, context);
             setMessages(prev => [...prev, { role: 'model', text: responseText }]);
         } catch (error: any) {
-            console.error("Gemini Chat Error:", error);
-            setMessages(prev => [...prev, { role: 'model', text: "I encountered an error. Please check your connection." }]);
+            console.error("Chat Error:", error);
+            setMessages(prev => [...prev, { role: 'model', text: "I'm having trouble connecting right now. Please check your AI API keys!" }]);
         } finally {
             setIsLoading(false);
         }
@@ -88,8 +92,8 @@ export default function GeminiChat({ topics, mastery, mode = 'floating' }: Gemin
             {/* Chat Window */}
             {isOpen && (
                 <div className={`${mode === 'floating'
-                        ? "absolute bottom-20 right-0 w-[400px] h-[600px] border border-white/20 animate-in slide-in-from-bottom-8 duration-500"
-                        : "flex-grow flex flex-col w-full h-full"
+                    ? "absolute bottom-20 right-0 w-[400px] h-[600px] border border-white/20 animate-in slide-in-from-bottom-8 duration-500"
+                    : "flex-grow flex flex-col w-full h-full"
                     } glass dark:bg-slate-900/80 rounded-[2rem] shadow-2xl overflow-hidden`}>
                     <header className="bg-primary p-5 text-white flex justify-between items-center bg-gradient-to-r from-primary to-indigo-600">
                         <div className="flex items-center gap-3">
@@ -97,18 +101,23 @@ export default function GeminiChat({ topics, mastery, mode = 'floating' }: Gemin
                                 <Bot className="w-5 h-5" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-sm">Gemini Master</h3>
+                                <h3 className="font-bold text-sm">IDEA Master</h3>
                                 <div className="flex items-center gap-1.5">
                                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                                     <span className="text-[10px] text-white/80 font-bold uppercase tracking-wider">Online</span>
                                 </div>
                             </div>
                         </div>
-                        {mode === 'floating' && (
-                            <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-white/10 rounded-xl transition-colors">
-                                <X className="w-5 h-5" />
+                        <div className="flex items-center gap-3">
+                            <button onClick={handleClear} className="p-2 hover:bg-white/10 rounded-xl transition-colors" title="Clear History">
+                                <RotateCcw className="w-4 h-4" />
                             </button>
-                        )}
+                            {mode === 'floating' && (
+                                <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-white/10 rounded-xl transition-colors">
+                                    <X className="w-5 h-5" />
+                                </button>
+                            )}
+                        </div>
                     </header>
 
                     <div className="flex-grow overflow-y-auto p-6 space-y-6 scrollbar-hide">
@@ -153,7 +162,7 @@ export default function GeminiChat({ topics, mastery, mode = 'floating' }: Gemin
                         </div>
                         <div className="mt-3 flex items-center justify-center gap-1.5 text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
                             <Sparkles className="w-3 h-3" />
-                            Gemini 1.5 Flash
+                            IDEA Engine
                         </div>
                     </div>
                 </div>
