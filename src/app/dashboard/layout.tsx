@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, BarChart3, Trophy, Bot, Plus, Download, Trash2, Settings, ChevronDown, LayoutGrid } from "lucide-react";
+import { LayoutDashboard, BarChart3, Trophy, Bot, Plus, Download, Trash2, Settings, ChevronDown, LayoutGrid, CalendarDays } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import SignInButton from "@/components/SignInButton";
 import { useSession } from "next-auth/react";
@@ -43,6 +43,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
         { name: "Progress", href: "/dashboard/progress", icon: BarChart3 },
         { name: "Points", href: "/dashboard/points", icon: Trophy },
+        { name: "Timetable", href: "/dashboard/timetable", icon: CalendarDays },
         { name: "AI Tutor", href: "/dashboard/tutor", icon: Bot },
     ];
 
