@@ -6,14 +6,27 @@ export interface TimeSlot {
     topicId: string;
     topicName: string;
     subject: string;
-    tier: number;        // Assessment tier (1-5)
+    tier: number;           // Assessment tier (1-5)
+    confidenceScore: number; // 0-100 from assessment
     isCompleted: boolean;
 }
 
 /**
- * Time Sync Formula: Ta = Tbase * (1.5 - (n * 0.2))
- * n = Tier (1-5) — higher tier = more mastery = less time needed
+ * Time allocation per tier (in minutes):
+ * Tier 1 (Beginner)     → 90 min  (needs most work)
+ * Tier 2 (Basic)        → 75 min
+ * Tier 3 (Intermediate) → 60 min
+ * Tier 4 (Advanced)     → 45 min
+ * Tier 5 (Expert)       → 30 min  (just revision)
  */
+export const TIER_MINUTES: Record<number, number> = {
+    1: 90,
+    2: 75,
+    3: 60,
+    4: 45,
+    5: 30,
+};
+
 export const calculateAllocatedTime = (baseTime: number, tier: number): number => {
     return baseTime * (1.5 - (tier * 0.2));
 };
@@ -23,66 +36,62 @@ export const generateDailyTimetable = (
     topics: Topic[],
     mastery: StudentMastery[],
     startHour: number = 9,
-    endHour: number = 17  // Default end time 5 PM
+    endHour: number = 17
 ): TimeSlot[] => {
-    const windowMinutes = Math.max((endHour - startHour) * 60, 60); // At least 1 hour window
+    const endMinutesLimit = endHour * 60;
 
-    // Include ALL topics that are not fully mastered (tier < 5 or no mastery record)
-    const availableTopicsRaw = topics.filter(t => {
+    // ONLY include topics that have been assessed (have a mastery record)
+    // and are not yet fully mastered (tier < 5 or not completed)
+    const assessedTopics = topics.filter(t => {
         const m = mastery.find(m => m.topicId === t.id);
-        // Include if: no mastery record, not completed, or tier < 5
-        return !m || !m.isCompleted || m.currentTier < 5;
+        return m !== undefined && (!m.isCompleted || m.currentTier < 5);
     });
 
-    if (availableTopicsRaw.length === 0) return [];
+    if (assessedTopics.length === 0) return [];
 
-    // Interleave subjects (P, C, M, P, C, M...) for balanced study
-    const physics = availableTopicsRaw.filter(t => t.subject === 'Physics').sort((a, b) => b.weightage - a.weightage);
-    const chemistry = availableTopicsRaw.filter(t => t.subject === 'Chemistry').sort((a, b) => b.weightage - a.weightage);
-    const math = availableTopicsRaw.filter(t => t.subject === 'Math').sort((a, b) => b.weightage - a.weightage);
+    // Sort: interleave subjects (P, C, M) and within each subject sort by tier ascending
+    // (weakest topics first so they get scheduled when energy is highest)
+    const bySubject: Record<string, Topic[]> = { Physics: [], Chemistry: [], Math: [] };
+    assessedTopics.forEach(t => {
+        if (bySubject[t.subject]) bySubject[t.subject].push(t);
+    });
 
-    const availableTopics: Topic[] = [];
-    const maxLen = Math.max(physics.length, chemistry.length, math.length);
+    // Sort each subject by tier ascending (lower tier = needs more work = schedule first)
+    Object.keys(bySubject).forEach(subj => {
+        bySubject[subj].sort((a, b) => {
+            const ma = mastery.find(m => m.topicId === a.id)!;
+            const mb = mastery.find(m => m.topicId === b.id)!;
+            return ma.currentTier - mb.currentTier;
+        });
+    });
+
+    // Interleave subjects
+    const orderedTopics: Topic[] = [];
+    const maxLen = Math.max(...Object.values(bySubject).map(a => a.length));
     for (let i = 0; i < maxLen; i++) {
-        if (physics[i]) availableTopics.push(physics[i]);
-        if (chemistry[i]) availableTopics.push(chemistry[i]);
-        if (math[i]) availableTopics.push(math[i]);
+        if (bySubject.Physics[i]) orderedTopics.push(bySubject.Physics[i]);
+        if (bySubject.Chemistry[i]) orderedTopics.push(bySubject.Chemistry[i]);
+        if (bySubject.Math[i]) orderedTopics.push(bySubject.Math[i]);
     }
-
-    // Calculate total weight for normalization
-    let totalWeight = 0;
-    availableTopics.forEach(t => {
-        const m = mastery.find(m => m.topicId === t.id);
-        const tier = m ? m.currentTier : 1; // Default tier 1 for unassessed topics
-        totalWeight += calculateAllocatedTime(t.weightage, tier);
-    });
-
-    if (totalWeight === 0) return [];
 
     const timetable: TimeSlot[] = [];
     let currentMinutes = startHour * 60;
-    const endMinutesLimit = endHour * 60;
 
-    // Target Multiplier: High rank goals require more intense study
-    const targetRank = userProfile.targetRank || 50000;
-    const targetMultiplier = targetRank < 1000 ? 1.5 : targetRank < 5000 ? 1.2 : 1.0;
+    for (const t of orderedTopics) {
+        if (currentMinutes >= endMinutesLimit) break;
 
-    availableTopics.forEach(t => {
-        if (currentMinutes >= endMinutesLimit) return; // Stop if we've hit the end time
+        const m = mastery.find(m => m.topicId === t.id)!;
+        const tier = m.currentTier;
 
-        const m = mastery.find(m => m.topicId === t.id);
-        const tier = m ? m.currentTier : 1;
-        const allocatedWeight = calculateAllocatedTime(t.weightage, tier);
+        // Fixed time per tier — adjusted by confidence score
+        // Lower confidence within a tier → add up to 15 extra minutes
+        const baseMins = TIER_MINUTES[tier] ?? 60;
+        const confidenceBonus = Math.round((1 - (m.confidenceScore / 100)) * 15);
+        const durationMinutes = Math.min(baseMins + confidenceBonus, 90);
 
-        // Distribute the window based on relative weight
-        const rawDuration = Math.floor((allocatedWeight / totalWeight) * windowMinutes * targetMultiplier);
-        // Clamp: minimum 10 mins, maximum 90 mins per slot
-        const durationMinutes = Math.min(Math.max(rawDuration, 10), 90);
-
-        // Don't exceed end time
         const slotEnd = Math.min(currentMinutes + durationMinutes, endMinutesLimit);
         const actualDuration = slotEnd - currentMinutes;
-        if (actualDuration < 10) return; // Skip if less than 10 mins remain
+        if (actualDuration < 15) break; // Not enough time left
 
         const startH = Math.floor(currentMinutes / 60);
         const startM = currentMinutes % 60;
@@ -96,11 +105,13 @@ export const generateDailyTimetable = (
             topicName: t.name,
             subject: t.subject,
             tier,
-            isCompleted: m?.isCompleted || false,
+            confidenceScore: m.confidenceScore,
+            isCompleted: m.isCompleted,
         });
 
         currentMinutes = slotEnd;
-    });
+    }
 
     return timetable;
 };
+

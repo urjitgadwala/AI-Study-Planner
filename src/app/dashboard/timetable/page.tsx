@@ -226,13 +226,24 @@ export default function TimetablePage() {
                     <div className="w-20 h-20 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-6">
                         <Calendar className="w-10 h-10 text-muted-foreground" />
                     </div>
-                    <h3 className="text-xl font-black text-foreground mb-2">No Schedule Generated</h3>
-                    <p className="text-muted-foreground font-medium max-w-sm mx-auto mb-6">
-                        Add topics to your syllabus first, then set your study window and click <strong>Generate</strong>.
+                    <h3 className="text-xl font-black text-foreground mb-2">No Assessed Topics Found</h3>
+                    <p className="text-muted-foreground font-medium max-w-sm mx-auto mb-4">
+                        Your timetable is built from your <strong>assessment results</strong>. Go to the Dashboard, add topics, and complete the AI assessment for each one.
                     </p>
-                    <p className="text-xs text-muted-foreground font-medium">
-                        Tip: Topics are automatically prioritized based on your assessment tier and weightage.
-                    </p>
+                    <div className="inline-flex flex-col gap-2 text-left text-sm bg-secondary/60 border border-border rounded-2xl p-4 max-w-xs mx-auto">
+                        <div className="flex items-center gap-2 text-muted-foreground font-bold">
+                            <span className="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center font-black">1</span>
+                            Add topics from the Dashboard
+                        </div>
+                        <div className="flex items-center gap-2 text-muted-foreground font-bold">
+                            <span className="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center font-black">2</span>
+                            Complete the AI assessment for each topic
+                        </div>
+                        <div className="flex items-center gap-2 text-muted-foreground font-bold">
+                            <span className="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center font-black">3</span>
+                            Return here and click <strong className="text-foreground ml-1">Generate</strong>
+                        </div>
+                    </div>
                 </div>
             ) : (
                 <div className="space-y-3">
@@ -252,8 +263,8 @@ export default function TimetablePage() {
                                 key={idx}
                                 onClick={() => toggleSlot(slotKey)}
                                 className={`group flex items-center gap-4 p-4 rounded-2xl border cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 ${isDone
-                                        ? "bg-secondary/50 border-border opacity-60"
-                                        : `${colors.bg} ${colors.border}`
+                                    ? "bg-secondary/50 border-border opacity-60"
+                                    : `${colors.bg} ${colors.border}`
                                     }`}
                             >
                                 {/* Time Column */}
