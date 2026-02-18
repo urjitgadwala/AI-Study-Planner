@@ -92,10 +92,10 @@ export default function GeminiChat({ topics, mastery, mode = 'floating' }: Gemin
             {/* Chat Window */}
             {isOpen && (
                 <div className={`${mode === 'floating'
-                    ? "absolute bottom-20 right-0 w-[400px] h-[600px] border border-white/20 animate-in slide-in-from-bottom-8 duration-500"
+                    ? "absolute bottom-20 right-0 w-[400px] h-[min(600px,80vh)] border border-white/20 animate-in slide-in-from-bottom-8 duration-500"
                     : "flex-grow flex flex-col w-full h-full"
-                    } glass dark:bg-slate-900/80 rounded-[2rem] shadow-2xl overflow-hidden`}>
-                    <header className="bg-primary p-5 text-white flex justify-between items-center bg-gradient-to-r from-primary to-indigo-600">
+                    } glass dark:bg-slate-900/80 rounded-[2rem] shadow-2xl overflow-hidden flex flex-col`}>
+                    <header className="bg-primary p-5 text-white flex justify-between items-center bg-gradient-to-r from-primary to-indigo-600 shrink-0">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-white/20 rounded-xl">
                                 <Bot className="w-5 h-5" />
@@ -120,7 +120,7 @@ export default function GeminiChat({ topics, mastery, mode = 'floating' }: Gemin
                         </div>
                     </header>
 
-                    <div className="flex-grow overflow-y-auto p-6 space-y-6 scrollbar-hide">
+                    <div className="flex-grow overflow-y-auto p-6 space-y-6 custom-scrollbar">
                         {messages.map((msg, idx) => (
                             <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                                 <div className={`max-w-[85%] p-4 rounded-3xl text-sm leading-relaxed shadow-sm transition-all ${msg.role === 'user'
