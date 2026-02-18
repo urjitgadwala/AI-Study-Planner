@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { db } from "@/lib/db";
 import { generateDailyTimetable, TimeSlot } from "@/lib/scheduler";
 import { Topic, StudentMastery, UserProfile } from "@/lib/types";
-import { Calendar, Clock, BookOpen, CheckCircle2, Circle, Zap, RefreshCw, ChevronRight } from "lucide-react";
+import { Calendar, Clock, BookOpen, CheckCircle2, Circle, Zap, RefreshCw, Star } from "lucide-react";
 
 const SUBJECT_COLORS: Record<string, { bg: string; text: string; border: string; dot: string }> = {
     Physics: {
@@ -28,6 +28,14 @@ const SUBJECT_COLORS: Record<string, { bg: string; text: string; border: string;
     },
 };
 
+const TIER_LABELS: Record<number, { label: string; color: string }> = {
+    1: { label: "Beginner", color: "text-red-500 bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800" },
+    2: { label: "Basic", color: "text-orange-500 bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800" },
+    3: { label: "Intermediate", color: "text-amber-500 bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800" },
+    4: { label: "Advanced", color: "text-blue-500 bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800" },
+    5: { label: "Expert", color: "text-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800" },
+};
+
 function formatDuration(start: string, end: string): string {
     const [sh, sm] = start.split(":").map(Number);
     const [eh, em] = end.split(":").map(Number);
@@ -47,6 +55,12 @@ function formatTime12(time24: string): string {
     return `${h12}:${m.toString().padStart(2, "0")} ${period}`;
 }
 
+function hourLabel(h: number): string {
+    if (h < 12) return `${h}:00 AM`;
+    if (h === 12) return "12:00 PM";
+    return `${h - 12}:00 PM`;
+}
+
 export default function TimetablePage() {
     const { data: session } = useSession();
     const userId = session?.user?.email || "default_user";
@@ -56,6 +70,7 @@ export default function TimetablePage() {
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [timetable, setTimetable] = useState<TimeSlot[]>([]);
     const [startHour, setStartHour] = useState(9);
+    const [endHour, setEndHour] = useState(17);
     const [completedSlots, setCompletedSlots] = useState<Set<string>>(new Set());
     const [mounted, setMounted] = useState(false);
 
@@ -68,24 +83,22 @@ export default function TimetablePage() {
         setMastery(m);
         setProfile(p);
         if (p) {
-            const tt = generateDailyTimetable(p, t, m, startHour);
-            setTimetable(tt);
+            setTimetable(generateDailyTimetable(p, t, m, 9, 17));
         }
     }, [userId]);
 
     const regenerate = () => {
-        if (profile) {
-            const tt = generateDailyTimetable(profile, topics, mastery, startHour);
-            setTimetable(tt);
+        if (profile && endHour > startHour) {
+            setTimetable(generateDailyTimetable(profile, topics, mastery, startHour, endHour));
             setCompletedSlots(new Set());
         }
     };
 
-    const toggleSlot = (topicId: string) => {
+    const toggleSlot = (key: string) => {
         setCompletedSlots(prev => {
             const next = new Set(prev);
-            if (next.has(topicId)) next.delete(topicId);
-            else next.add(topicId);
+            if (next.has(key)) next.delete(key);
+            else next.add(key);
             return next;
         });
     };
@@ -122,30 +135,43 @@ export default function TimetablePage() {
                     </div>
                     <h1 className="text-3xl font-black text-foreground">Today's Study Plan</h1>
                     <p className="text-muted-foreground mt-1 font-medium">
-                        AI-generated schedule based on your syllabus and mastery levels.
+                        Schedule based on your syllabus and assessment results.
                     </p>
                 </div>
-                <div className="flex items-center gap-3">
+
+                {/* Time Controls */}
+                <div className="flex flex-wrap items-center gap-3">
                     <div className="flex items-center gap-2">
-                        <label className="text-sm font-bold text-muted-foreground">Start at:</label>
+                        <label className="text-sm font-bold text-muted-foreground whitespace-nowrap">Start:</label>
                         <select
                             value={startHour}
                             onChange={e => setStartHour(Number(e.target.value))}
                             className="px-3 py-2 bg-secondary border border-border rounded-xl text-sm font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
                         >
-                            {Array.from({ length: 16 }, (_, i) => i + 5).map(h => (
-                                <option key={h} value={h}>
-                                    {h < 12 ? `${h}:00 AM` : h === 12 ? "12:00 PM" : `${h - 12}:00 PM`}
-                                </option>
+                            {Array.from({ length: 19 }, (_, i) => i + 4).map(h => (
+                                <option key={h} value={h} disabled={h >= endHour}>{hourLabel(h)}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <label className="text-sm font-bold text-muted-foreground whitespace-nowrap">End:</label>
+                        <select
+                            value={endHour}
+                            onChange={e => setEndHour(Number(e.target.value))}
+                            className="px-3 py-2 bg-secondary border border-border rounded-xl text-sm font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                        >
+                            {Array.from({ length: 19 }, (_, i) => i + 4).map(h => (
+                                <option key={h} value={h} disabled={h <= startHour}>{hourLabel(h)}</option>
                             ))}
                         </select>
                     </div>
                     <button
                         onClick={regenerate}
-                        className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-sm font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 active:scale-95"
+                        disabled={endHour <= startHour}
+                        className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-sm font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <RefreshCw className="w-4 h-4" />
-                        Regenerate
+                        Generate
                     </button>
                 </div>
             </div>
@@ -201,54 +227,66 @@ export default function TimetablePage() {
                         <Calendar className="w-10 h-10 text-muted-foreground" />
                     </div>
                     <h3 className="text-xl font-black text-foreground mb-2">No Schedule Generated</h3>
-                    <p className="text-muted-foreground font-medium max-w-sm mx-auto">
-                        Add topics to your syllabus first, then come back to generate your personalized study plan.
+                    <p className="text-muted-foreground font-medium max-w-sm mx-auto mb-6">
+                        Add topics to your syllabus first, then set your study window and click <strong>Generate</strong>.
+                    </p>
+                    <p className="text-xs text-muted-foreground font-medium">
+                        Tip: Topics are automatically prioritized based on your assessment tier and weightage.
                     </p>
                 </div>
             ) : (
                 <div className="space-y-3">
-                    <h2 className="text-lg font-black text-foreground">Schedule</h2>
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-lg font-black text-foreground">Schedule</h2>
+                        <p className="text-xs text-muted-foreground font-bold">Click a slot to mark as done</p>
+                    </div>
                     {timetable.map((slot, idx) => {
                         const colors = SUBJECT_COLORS[slot.subject] || SUBJECT_COLORS.Physics;
-                        const isDone = completedSlots.has(slot.topicId + idx);
+                        const slotKey = slot.topicId + idx;
+                        const isDone = completedSlots.has(slotKey);
                         const duration = formatDuration(slot.startTime, slot.endTime);
+                        const tierInfo = TIER_LABELS[slot.tier] || TIER_LABELS[1];
 
                         return (
                             <div
                                 key={idx}
-                                onClick={() => toggleSlot(slot.topicId + idx)}
+                                onClick={() => toggleSlot(slotKey)}
                                 className={`group flex items-center gap-4 p-4 rounded-2xl border cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 ${isDone
                                         ? "bg-secondary/50 border-border opacity-60"
                                         : `${colors.bg} ${colors.border}`
                                     }`}
                             >
                                 {/* Time Column */}
-                                <div className="hidden sm:flex flex-col items-end min-w-[80px]">
+                                <div className="hidden sm:flex flex-col items-center min-w-[90px] bg-card/60 rounded-xl p-2 border border-border/50">
                                     <span className="text-xs font-black text-foreground">{formatTime12(slot.startTime)}</span>
-                                    <span className="text-[10px] text-muted-foreground font-bold">to {formatTime12(slot.endTime)}</span>
+                                    <div className="w-full h-px bg-border my-1" />
+                                    <span className="text-xs font-black text-foreground">{formatTime12(slot.endTime)}</span>
+                                    <span className="text-[10px] text-muted-foreground font-bold mt-0.5">{duration}</span>
                                 </div>
 
-                                {/* Divider */}
-                                <div className="hidden sm:flex flex-col items-center gap-1">
-                                    <div className={`w-2.5 h-2.5 rounded-full ${isDone ? "bg-emerald-500" : colors.dot}`} />
-                                    <div className="w-0.5 h-8 bg-border" />
+                                {/* Divider dot */}
+                                <div className="hidden sm:flex flex-col items-center gap-1 shrink-0">
+                                    <div className={`w-3 h-3 rounded-full ${isDone ? "bg-emerald-500" : colors.dot}`} />
+                                    <div className="w-0.5 h-6 bg-border" />
                                 </div>
 
                                 {/* Content */}
                                 <div className="flex-grow min-w-0">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${colors.bg} ${colors.text} border ${colors.border}`}>
+                                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                                        <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border ${colors.bg} ${colors.text} ${colors.border}`}>
                                             {slot.subject}
                                         </span>
-                                        <span className="text-[10px] font-bold text-muted-foreground flex items-center gap-1">
-                                            <Clock className="w-3 h-3" /> {duration}
+                                        <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${tierInfo.color}`}>
+                                            <Star className="w-2.5 h-2.5 inline mr-0.5" />
+                                            Tier {slot.tier} · {tierInfo.label}
+                                        </span>
+                                        <span className="text-[10px] font-bold text-muted-foreground flex items-center gap-1 sm:hidden">
+                                            <Clock className="w-3 h-3" />
+                                            {formatTime12(slot.startTime)} – {formatTime12(slot.endTime)} ({duration})
                                         </span>
                                     </div>
-                                    <p className={`font-bold text-sm truncate ${isDone ? "line-through text-muted-foreground" : "text-foreground"}`}>
+                                    <p className={`font-bold text-sm ${isDone ? "line-through text-muted-foreground" : "text-foreground"}`}>
                                         {slot.topicName}
-                                    </p>
-                                    <p className="text-xs text-muted-foreground font-medium sm:hidden">
-                                        {formatTime12(slot.startTime)} – {formatTime12(slot.endTime)}
                                     </p>
                                 </div>
 
