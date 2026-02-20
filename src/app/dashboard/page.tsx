@@ -9,6 +9,7 @@ import TopicInput from "@/components/TopicInput";
 import TestInterface from "@/components/TestInterface";
 import SyllabusAnalysis from "@/components/SyllabusAnalysis";
 import PdfImportModal from "@/components/PdfImportModal";
+import TopicAssessment from "@/components/TopicAssessment";
 import { db } from "@/lib/db";
 import { generateDailyTimetable, TimeSlot } from "@/lib/scheduler";
 import { Topic, StudentMastery, UserProfile, FocusLog } from "@/lib/types";
@@ -103,25 +104,33 @@ export default function Dashboard() {
     }
   };
 
-  const handleAssessmentComplete = (results: any) => {
+  const handleAssessmentComplete = (result: any) => {
     if (!assessingTopic) return;
-    const tierMap: Record<string, number> = { 'No': 1, 'Mostly': 3, 'Yes': 5 };
-    const baseTier = results.formula_recall ? tierMap[results.formula_recall] : 2;
+
     const newEntry: StudentMastery = {
       userId: profile?.id || 'user_1',
       topicId: assessingTopic.id,
-      currentTier: baseTier,
-      isCompleted: true,
-      confidenceScore: (results.foundations || 3) * 20,
-      completedAt: new Date().toISOString()
+      currentTier: result.tier,
+      isCompleted: result.tier >= 4, // Auto-complete if they ace it
+      confidenceScore: result.tier * 20,
+      completedAt: result.tier >= 4 ? new Date().toISOString() : undefined
     };
+
     const newMastery = [...mastery.filter(m => m.topicId !== assessingTopic.id), newEntry];
     setMastery(newMastery);
     db.saveMastery(newMastery, userId);
     setAssessingTopic(null);
+
     if (profile) {
       setTimetable(generateDailyTimetable(profile, topics, newMastery));
     }
+
+    confetti({
+      particleCount: 150,
+      spread: 100,
+      origin: { y: 0.6 },
+      colors: ['#4f46e5', '#10b981']
+    });
   };
 
   if (!profile) return <div className="p-10 text-center">Loading Dashboard...</div>;
@@ -131,7 +140,11 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content Column */}
         <div className="lg:col-span-2 space-y-8">
-          <SyllabusAnalysis topics={topics} mastery={mastery} />
+          <SyllabusAnalysis
+            topics={topics}
+            mastery={mastery}
+            onStartAssessment={(topic) => setAssessingTopic(topic)}
+          />
 
           <div className="space-y-4">
             <h2 className="text-2xl font-bold text-foreground">Your Daily Roadmap</h2>
@@ -178,11 +191,12 @@ export default function Dashboard() {
       {/* Modals & Overlays */}
       {
         assessingTopic && (
-          <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-6">
-            <div className="w-full max-w-md">
-              <MentalityAssessment
+          <div className="fixed inset-0 bg-background/80 backdrop-blur-md z-[200] flex items-center justify-center p-6">
+            <div className="w-full max-w-2xl">
+              <TopicAssessment
                 topicName={assessingTopic.name}
                 onComplete={handleAssessmentComplete}
+                onCancel={() => setAssessingTopic(null)}
               />
             </div>
           </div>

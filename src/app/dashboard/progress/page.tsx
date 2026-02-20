@@ -7,6 +7,9 @@ import { db } from '@/lib/db';
 import { useSession } from 'next-auth/react';
 import { Topic, StudentMastery } from '@/lib/types';
 import { CheckCircle2, Circle, Clock, ChevronRight, Trash2, AlertCircle } from 'lucide-react';
+import TopicAssessment from '@/components/TopicAssessment';
+import { generateDailyTimetable } from '@/lib/scheduler';
+import confetti from 'canvas-confetti';
 
 export default function ProgressPage() {
     const [mounted, setMounted] = React.useState(false);
@@ -14,6 +17,7 @@ export default function ProgressPage() {
     const [topics, setTopics] = useState<Topic[]>([]);
     const [mastery, setMastery] = useState<StudentMastery[]>([]);
     const [deletingTopicId, setDeletingTopicId] = useState<string | null>(null);
+    const [assessingTopic, setAssessingTopic] = useState<Topic | null>(null);
 
     const { data: session } = useSession();
     const userId = session?.user?.email || 'default_user';
@@ -34,6 +38,31 @@ export default function ProgressPage() {
         setDeletingTopicId(null);
     };
 
+    const handleAssessmentComplete = (result: any) => {
+        if (!assessingTopic) return;
+
+        const newEntry: StudentMastery = {
+            userId: userId,
+            topicId: assessingTopic.id,
+            currentTier: result.tier,
+            isCompleted: result.tier >= 4,
+            confidenceScore: result.tier * 20,
+            completedAt: result.tier >= 4 ? new Date().toISOString() : undefined
+        };
+
+        const newMastery = [...mastery.filter(m => m.topicId !== assessingTopic.id), newEntry];
+        setMastery(newMastery);
+        db.saveMastery(newMastery, userId);
+        setAssessingTopic(null);
+
+        confetti({
+            particleCount: 150,
+            spread: 100,
+            origin: { y: 0.6 },
+            colors: ['#4f46e5', '#10b981']
+        });
+    };
+
     const subjects = ['Physics', 'Chemistry', 'Math'];
     const filteredTopics = topics.filter(t => t.subject === activeSubject);
 
@@ -52,7 +81,11 @@ export default function ProgressPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-8">
-                    <SyllabusAnalysis topics={topics} mastery={mastery} />
+                    <SyllabusAnalysis
+                        topics={topics}
+                        mastery={mastery}
+                        onStartAssessment={(topic) => setAssessingTopic(topic)}
+                    />
 
                     <div className="bg-card p-0 rounded-3xl border border-border shadow-sm overflow-hidden relative">
                         {/* Deletion Confirmation Overlay */}
@@ -160,11 +193,23 @@ export default function ProgressPage() {
                         </div>
                     </div>
                 </div>
-
                 <div className="space-y-8">
                     <SyllabusTracker topics={topics} mastery={mastery} />
                 </div>
             </div>
+
+            {/* Modals & Overlays */}
+            {assessingTopic && (
+                <div className="fixed inset-0 bg-background/80 backdrop-blur-md z-[200] flex items-center justify-center p-6">
+                    <div className="w-full max-w-2xl">
+                        <TopicAssessment
+                            topicName={assessingTopic.name}
+                            onComplete={handleAssessmentComplete}
+                            onCancel={() => setAssessingTopic(null)}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
