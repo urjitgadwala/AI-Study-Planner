@@ -30,55 +30,62 @@ export default function Dashboard() {
   const [activeTest, setActiveTest] = useState<any>(null);
 
   useEffect(() => {
-    const loadedProfile = db.getProfile(userId);
-    const loadedTopics = db.getTopics(userId);
-    const loadedMastery = db.getMastery(userId);
-    const loadedFocusLogs = db.getFocusLogs(userId);
+    const fetchData = async () => {
+      const loadedProfile = await db.getProfile(userId);
+      const loadedTopics = await db.getTopics(userId);
+      const loadedMastery = await db.getMastery(userId);
+      const loadedFocusLogs = await db.getFocusLogs(userId);
 
-    setProfile(loadedProfile);
-    setTopics(loadedTopics);
-    setMastery(loadedMastery);
-    setFocusLogs(loadedFocusLogs);
+      setProfile(loadedProfile);
+      setTopics(loadedTopics);
+      setMastery(loadedMastery);
+      setFocusLogs(loadedFocusLogs);
 
-    if (loadedProfile) {
-      const generated = generateDailyTimetable(loadedProfile, loadedTopics, loadedMastery);
-      setTimetable(generated);
-    }
+      if (loadedProfile) {
+        const generated = generateDailyTimetable(loadedProfile, loadedTopics, loadedMastery, 9, 17, 15);
+        setTimetable(generated);
+      }
+    };
+
+    fetchData();
   }, [userId]);
 
-  const handleToggleComplete = (topicId: string) => {
+  const handleToggleComplete = async (topicId: string) => {
     const topic = topics.find(t => t.id === topicId);
     if (!topic) return;
 
     const existingMastery = mastery.find(m => m.topicId === topicId);
+    const isCurrentlyCompleted = existingMastery?.isCompleted || false;
+
+    let newMastery: StudentMastery[];
     if (!existingMastery) {
-      setAssessingTopic(topic);
+      newMastery = [...mastery, { userId, topicId, currentTier: 1, isCompleted: true, confidenceScore: 50, completedAt: new Date().toISOString() }];
     } else {
-      const wasJustCompleted = !mastery.find(m => m.topicId === topicId)?.isCompleted;
-      const newMastery = mastery.map(m =>
-        m.topicId === topicId ? { ...m, isCompleted: !m.isCompleted, completedAt: !m.isCompleted ? new Date().toISOString() : undefined } : m
+      newMastery = mastery.map(m =>
+        m.topicId === topicId ? { ...m, isCompleted: !isCurrentlyCompleted, completedAt: !isCurrentlyCompleted ? new Date().toISOString() : undefined } : m
       );
+    }
 
-      if (wasJustCompleted) {
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ['#4f46e5', '#10b981', '#f59e0b']
-        });
+    setMastery(newMastery);
+    await db.saveMastery(newMastery, userId);
 
-        if (profile) {
-          const updatedProfile = { ...profile, currentXP: profile.currentXP + 50 };
-          setProfile(updatedProfile);
-          db.saveProfile(updatedProfile, userId);
-        }
-      }
+    if (!isCurrentlyCompleted) {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#4f46e5', '#10b981', '#f59e0b']
+      });
 
-      setMastery(newMastery);
-      db.saveMastery(newMastery, userId);
       if (profile) {
-        setTimetable(generateDailyTimetable(profile, topics, newMastery));
+        const updatedProfile = { ...profile, currentXP: profile.currentXP + 50 };
+        setProfile(updatedProfile);
+        await db.saveProfile(updatedProfile, userId);
       }
+    }
+
+    if (profile) {
+      setTimetable(generateDailyTimetable(profile, topics, newMastery));
     }
   };
 
@@ -92,33 +99,33 @@ export default function Dashboard() {
     setFocusTopic({ topic, duration });
   };
 
-  const handleFocusComplete = (log: FocusLog) => {
-    db.saveFocusLog(log, userId);
+  const handleFocusComplete = async (log: FocusLog) => {
+    await db.saveFocusLog(log, userId);
     setFocusLogs([...focusLogs, log]);
     setFocusTopic(null);
     if (profile) {
       const xpGain = Math.floor(log.actualMinutes * (log.focusScore / 100));
       const newProfile = { ...profile, currentXP: profile.currentXP + xpGain };
       setProfile(newProfile);
-      db.saveProfile(newProfile, userId);
+      await db.saveProfile(newProfile, userId);
     }
   };
 
-  const handleAssessmentComplete = (result: any) => {
+  const handleAssessmentComplete = async (result: any) => {
     if (!assessingTopic) return;
 
     const newEntry: StudentMastery = {
       userId: profile?.id || 'user_1',
       topicId: assessingTopic.id,
       currentTier: result.tier,
-      isCompleted: result.tier >= 4, // Auto-complete if they ace it
+      isCompleted: result.tier >= 4,
       confidenceScore: result.tier * 20,
       completedAt: result.tier >= 4 ? new Date().toISOString() : undefined
     };
 
     const newMastery = [...mastery.filter(m => m.topicId !== assessingTopic.id), newEntry];
     setMastery(newMastery);
-    db.saveMastery(newMastery, userId);
+    await db.saveMastery(newMastery, userId);
     setAssessingTopic(null);
 
     if (profile) {
@@ -131,6 +138,25 @@ export default function Dashboard() {
       origin: { y: 0.6 },
       colors: ['#4f46e5', '#10b981']
     });
+  };
+
+  const handleAddTopic = async (topic: Partial<Topic>) => {
+    const newTopic: Topic = {
+      id: `u_${Date.now()}`,
+      name: topic.name || "Untitled",
+      subject: topic.subject as any || "Physics",
+      weightage: topic.weightage || 5,
+      parentSubject: topic.parentSubject || topic.subject || "Physics",
+    };
+    const updated = [...topics, newTopic];
+    setTopics(updated);
+    await db.saveTopics(updated, userId);
+  };
+
+  const handleDeleteTopic = async (topicId: string) => {
+    await db.deleteTopic(topicId, userId);
+    const updated = topics.filter(t => t.id !== topicId);
+    setTopics(updated);
   };
 
   if (!profile) return <div className="p-10 text-center">Loading Dashboard...</div>;
@@ -213,7 +239,6 @@ export default function Dashboard() {
           />
         )
       }
-
     </>
   );
 }

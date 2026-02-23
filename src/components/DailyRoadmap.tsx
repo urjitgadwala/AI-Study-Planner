@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { TimeSlot } from '@/lib/scheduler';
-import { Info, CheckCircle2 } from 'lucide-react';
+import { Info, CheckCircle2, Clock } from 'lucide-react';
 
 interface DailyRoadmapProps {
     slots: TimeSlot[];
@@ -35,34 +35,40 @@ export default function DailyRoadmap({ slots, onToggleComplete, onStartFocus }: 
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <span className={`text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider ${slot.subject === 'Physics' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                            <span className={`text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider ${slot.isBreak ? 'bg-gray-100 text-gray-500 dark:bg-gray-800/30' :
+                                slot.subject === 'Physics' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
                                     slot.subject === 'Chemistry' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' :
                                         'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
                                 }`}>
-                                {slot.subject}
+                                {slot.isBreak ? 'Break' : slot.subject}
                             </span>
-                            <h3 className={`font-bold text-foreground transition-all ${slot.isCompleted ? 'line-through' : ''}`}>
+                            <h3 className={`font-bold text-foreground transition-all ${slot.isCompleted ? 'line-through' : ''} ${slot.isBreak ? 'text-muted-foreground' : ''}`}>
                                 {slot.topicName}
                             </h3>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => onStartFocus(slot.topicId)}
-                            className="p-2 text-muted-foreground hover:text-foreground transition-colors"
-                        >
-                            <Info className="w-5 h-5" />
-                        </button>
-                        <button
-                            onClick={() => onToggleComplete(slot.topicId)}
-                            className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${slot.isCompleted
-                                    ? 'bg-primary border-primary text-white'
-                                    : 'border-border bg-secondary hover:border-primary/50'
-                                }`}
-                        >
-                            {slot.isCompleted && <CheckCircle2 className="w-4 h-4 fill-white stroke-primary" />}
-                        </button>
+                        {!slot.isBreak && (
+                            <>
+                                <button
+                                    onClick={() => onStartFocus(slot.topicId)}
+                                    className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+                                >
+                                    <Info className="w-5 h-5" />
+                                </button>
+                                <button
+                                    onClick={() => onToggleComplete(slot.topicId)}
+                                    className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${slot.isCompleted
+                                        ? 'bg-primary border-primary text-white'
+                                        : 'border-border bg-secondary hover:border-primary/50'
+                                        }`}
+                                >
+                                    {slot.isCompleted && <CheckCircle2 className="w-4 h-4 fill-white stroke-primary" />}
+                                </button>
+                            </>
+                        )}
+                        {slot.isBreak && <Clock className="w-5 h-5 text-muted-foreground/40" />}
                     </div>
                 </div>
             ))}

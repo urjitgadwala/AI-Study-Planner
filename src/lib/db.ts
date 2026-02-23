@@ -1,141 +1,140 @@
 import topicsData from './topics.json';
 import { Topic, StudentMastery, FocusLog, Assessment, UserProfile, ChatMessage } from './types';
+import * as actions from './actions';
 
 // For the initial MVP, we will use individual localStorage keys or a unified JSON object.
 // This mock DB handler provides an abstraction layer for later migration to Supabase/PostgreSQL.
 
-const getScopedKey = (key: string, userId?: string) => {
-    if (!userId) return key;
-    return `${key}_${userId}`;
+// Client-side in-memory cache to prevent redundant fetches during navigation
+let cache: {
+    topics: Topic[] | null;
+    mastery: StudentMastery[] | null;
+    profile: UserProfile | null;
+    focusLogs: FocusLog[] | null;
+} = {
+    topics: null,
+    mastery: null,
+    profile: null,
+    focusLogs: null
 };
 
 export const db = {
-    getProfile: (userId?: string): UserProfile | null => {
-        if (typeof window === 'undefined') return null;
-        const key = getScopedKey('je_master_profile', userId);
-        const data = localStorage.getItem(key);
-        if (!data) {
-            // Return a default profile if none exists
-            const defaultProfile: UserProfile = {
-                id: userId || 'user_1',
-                name: 'JEE Master User',
-                username: 'jee_master_2026',
-                phoneNumber: '+91 98765 43210',
-                email: userId || 'user@example.com',
-                targetYear: 2026,
-                targetRank: 1000,
-                dailyHourLimit: 8,
-                currentXP: 1250,
-                streakCount: 5,
-                lastLogin: new Date().toISOString(),
-                badges: ['Early Bird', 'Consistency King'],
-                activeStreak: true
-            };
-            localStorage.setItem(key, JSON.stringify(defaultProfile));
-            return defaultProfile;
+    getProfile: async (userId?: string): Promise<UserProfile | null> => {
+        if (!userId) return null;
+        if (cache.profile && cache.profile.email === userId) return cache.profile;
+
+        const profile = await actions.getProfile(userId);
+        if (profile) {
+            cache.profile = {
+                ...profile,
+                lastLogin: profile.lastLogin.toISOString()
+            } as UserProfile;
+            return cache.profile;
         }
-        return JSON.parse(data);
+
+        // Fallback or default profile logic
+        const defaultProfile: UserProfile = {
+            id: userId,
+            name: 'JEE Master User',
+            username: 'jee_master_2026',
+            phoneNumber: '+91 98765 43210',
+            email: userId,
+            targetYear: 2026,
+            targetRank: 1000,
+            dailyHourLimit: 8,
+            currentXP: 1250,
+            streakCount: 5,
+            lastLogin: new Date().toISOString(),
+            badges: ['Early Bird', 'Consistency King'],
+            activeStreak: true
+        };
+        cache.profile = defaultProfile;
+        return defaultProfile;
     },
 
-    saveProfile: (profile: UserProfile, userId?: string) => {
-        const key = getScopedKey('je_master_profile', userId || profile.id);
-        localStorage.setItem(key, JSON.stringify(profile));
+    saveProfile: async (profile: UserProfile, userId?: string) => {
+        await actions.saveProfile(profile);
+        cache.profile = null; // Invalidate
     },
 
-    getTopics: (userId?: string): Topic[] => {
-        const seedTopics = topicsData as Topic[];
-        if (typeof window === 'undefined') return seedTopics;
+    getTopics: async (userId?: string): Promise<Topic[]> => {
+        if (cache.topics) return cache.topics;
 
-        // Filter out deleted seed topics
-        const deletedKey = getScopedKey('je_master_deleted_seed_topics', userId);
-        const deletedData = localStorage.getItem(deletedKey);
-        const deletedIds: string[] = deletedData ? JSON.parse(deletedData) : [];
-        const activeSeedTopics = seedTopics.filter(t => !deletedIds.includes(t.id));
-
-        const key = getScopedKey('je_master_user_topics', userId);
-        const userTopicsData = localStorage.getItem(key);
-        const userTopics = userTopicsData ? JSON.parse(userTopicsData) : [];
-        return [...activeSeedTopics, ...userTopics];
-    },
-
-    saveTopics: (topics: Topic[], userId?: string) => {
-        const key = getScopedKey('je_master_user_topics', userId);
-        localStorage.setItem(key, JSON.stringify(topics));
-    },
-
-    deleteTopic: (topicId: string, userId?: string) => {
-        if (typeof window === 'undefined') return;
-
-        // Handle user topics
-        if (topicId.startsWith('u_')) {
-            const key = getScopedKey('je_master_user_topics', userId);
-            const userTopicsData = localStorage.getItem(key);
-            if (userTopicsData) {
-                const userTopics: Topic[] = JSON.parse(userTopicsData);
-                const updated = userTopics.filter(t => t.id !== topicId);
-                localStorage.setItem(key, JSON.stringify(updated));
-            }
-        } else {
-            // Handle seed topics by storing them in a 'deleted' list
-            const key = getScopedKey('je_master_deleted_seed_topics', userId);
-            const data = localStorage.getItem(key);
-            const deletedIds: string[] = data ? JSON.parse(data) : [];
-            if (!deletedIds.includes(topicId)) {
-                deletedIds.push(topicId);
-                localStorage.setItem(key, JSON.stringify(deletedIds));
-            }
+        const dbTopics = await actions.getTopics(userId || '');
+        if (dbTopics && dbTopics.length > 0) {
+            cache.topics = dbTopics as Topic[];
+            return cache.topics;
         }
+        return topicsData as Topic[];
     },
 
-    getMastery: (userId?: string): StudentMastery[] => {
-        if (typeof window === 'undefined') return [];
-        const key = getScopedKey('je_master_mastery', userId);
-        const data = localStorage.getItem(key);
-        return data ? JSON.parse(data) : [];
+    saveTopics: async (topics: Topic[], userId?: string) => {
+        if (!userId) return;
+        await actions.saveTopics(topics, userId);
+        cache.topics = null; // Invalidate
     },
 
-    saveMastery: (mastery: StudentMastery[], userId?: string) => {
-        const key = getScopedKey('je_master_mastery', userId);
-        localStorage.setItem(key, JSON.stringify(mastery));
+    deleteTopic: async (topicId: string, userId?: string) => {
+        if (!userId) return;
+        await actions.deleteTopic(topicId, userId);
+        cache.topics = null; // Invalidate
     },
 
-    getFocusLogs: (userId?: string): FocusLog[] => {
-        if (typeof window === 'undefined') return [];
-        const key = getScopedKey('je_master_focus_logs', userId);
-        const data = localStorage.getItem(key);
-        return data ? JSON.parse(data) : [];
+    getMastery: async (userId?: string): Promise<StudentMastery[]> => {
+        if (!userId) return [];
+        if (cache.mastery) return cache.mastery;
+
+        const mastery = await actions.getMastery(userId);
+        cache.mastery = mastery.map(m => ({
+            ...m,
+            completedAt: m.completedAt?.toISOString()
+        })) as StudentMastery[];
+        return cache.mastery;
     },
 
-    saveFocusLog: (log: FocusLog, userId?: string) => {
-        const logs = db.getFocusLogs(userId);
-        const newLogs = [...logs, log];
-        const key = getScopedKey('je_master_focus_logs', userId);
-        localStorage.setItem(key, JSON.stringify(newLogs));
+    saveMastery: async (mastery: StudentMastery[], userId?: string) => {
+        if (!userId) return;
+        await actions.saveMastery(mastery, userId);
+        cache.mastery = null; // Invalidate
     },
 
-    getTestResults: (userId?: string): any[] => {
-        if (typeof window === 'undefined') return [];
-        const key = getScopedKey('je_master_test_results', userId);
-        const data = localStorage.getItem(key);
-        return data ? JSON.parse(data) : [];
+    getFocusLogs: async (userId?: string): Promise<FocusLog[]> => {
+        if (!userId) return [];
+        if (cache.focusLogs) return cache.focusLogs;
+
+        const logs = await actions.getFocusLogs(userId);
+        cache.focusLogs = logs.map(l => ({
+            ...l,
+            startTime: l.startTime.toISOString(),
+            endTime: l.endTime?.toISOString()
+        })) as FocusLog[];
+        return cache.focusLogs;
     },
 
-    saveTestResult: (result: any, userId?: string) => {
-        const results = db.getTestResults(userId);
-        const newResults = [...results, result];
-        const key = getScopedKey('je_master_test_results', userId);
-        localStorage.setItem(key, JSON.stringify(newResults));
+    saveFocusLog: async (log: FocusLog, userId?: string) => {
+        if (!userId) return;
+        await actions.saveFocusLog(log, userId);
+        cache.focusLogs = null; // Invalidate
     },
 
-    getChatHistory: (userId?: string): ChatMessage[] => {
-        if (typeof window === 'undefined') return [];
-        const key = getScopedKey('je_master_chat_history', userId);
-        const data = localStorage.getItem(key);
-        return data ? JSON.parse(data) : [];
+    getTestResults: async (userId?: string): Promise<any[]> => {
+        return [];
     },
 
-    saveChatHistory: (messages: ChatMessage[], userId?: string) => {
-        const key = getScopedKey('je_master_chat_history', userId);
-        localStorage.setItem(key, JSON.stringify(messages));
+    saveTestResult: async (result: any, userId?: string) => {
+    },
+
+    getChatHistory: async (userId?: string): Promise<ChatMessage[]> => {
+        if (!userId) return [];
+        const history = await actions.getChatHistory(userId);
+        return history.map(h => ({
+            role: h.role as 'user' | 'model',
+            text: h.text
+        }));
+    },
+
+    saveChatHistory: async (messages: ChatMessage[], userId?: string) => {
+        if (!userId) return;
+        await actions.saveChatHistory(messages, userId);
     }
 };

@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id             String           @id @default(cuid())
+  name           String?
+  username       String?          @unique
+  phoneNumber    String?
+  email          String?          @unique
+  targetYear     Int              @default(2026)
+  targetRank     Int?
+  dailyHourLimit Int              @default(8)
+  currentXP      Int              @default(0)
+  streakCount    Int              @default(0)
+  lastLogin      DateTime         @default(now())
+  badges         String[]         @default([])
+  activeStreak   Boolean          @default(true)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  assessments    Assessment[]
+  chatMessages   ChatMessage[]
+  focusLogs      FocusLog[]
+  mastery        StudentMastery[]
+}
+
+model Topic {
+  id            String           @id
+  name          String
+  subject       String
+  weightage     Int
+  parentSubject String
+  masteries     StudentMastery[]
+}
+
+model StudentMastery {
+  id              String    @id @default(cuid())
+  userId          String
+  topicId         String
+  currentTier     Int       @default(1)
+  isCompleted     Boolean   @default(false)
+  confidenceScore Int       @default(0)
+  completedAt     DateTime?
+  updatedAt       DateTime  @updatedAt
+  topic           Topic     @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, topicId])
+}
+
+model FocusLog {
+  id               String    @id @default(cuid())
+  userId           String
+  sessionId        String
+  startTime        DateTime
+  endTime          DateTime?
+  actualMinutes    Int
+  distractionCount Int
+  focusScore       Int
+  createdAt        DateTime  @default(now())
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Assessment {
+  id              String   @id @default(cuid())
+  userId          String
+  testDate        DateTime @default(now())
+  topicsCovered   String[]
+  score           Int
+  incorrectTopics Json
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  role      String
+  text      String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

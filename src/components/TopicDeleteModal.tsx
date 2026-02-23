@@ -24,11 +24,11 @@ export default function TopicDeleteModal({ topics, onTopicsDeleted, onCancel, us
         );
     };
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (selectedIds.length === 0) return;
 
         if (confirm(`Are you sure you want to delete ${selectedIds.length} topics?`)) {
-            selectedIds.forEach(id => db.deleteTopic(id, userId));
+            await Promise.all(selectedIds.map(id => db.deleteTopic(id, userId)));
             onTopicsDeleted();
         }
     };
@@ -54,8 +54,8 @@ export default function TopicDeleteModal({ topics, onTopicsDeleted, onCancel, us
                             key={topic.id}
                             onClick={() => toggleTopic(topic.id)}
                             className={`w-full flex items-center justify-between p-4 rounded-2xl border transition-all ${selectedIds.includes(topic.id)
-                                    ? 'bg-red-500/5 border-red-500/30 text-red-600 dark:text-red-400'
-                                    : 'bg-secondary/30 border-border text-foreground hover:bg-secondary/50'
+                                ? 'bg-red-500/5 border-red-500/30 text-red-600 dark:text-red-400'
+                                : 'bg-secondary/30 border-border text-foreground hover:bg-secondary/50'
                                 }`}
                         >
                             <div className="flex items-center gap-3 text-left">

@@ -1,0 +1,482 @@
+[
+    {
+        "id":  "ma_Bucket 1",
+        "text":  "Number of solutions of equation |x² − 5x + 6| = x − 2",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1",
+                        "2",
+                        "3"
+                    ],
+        "correctAnswer":  "2"
+    },
+    {
+        "id":  "ma_Bucket 1",
+        "text":  "If f(x)=|x−1|+|x−2|, minimum value is",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1",
+                        "2",
+                        "3"
+                    ],
+        "correctAnswer":  "1"
+    },
+    {
+        "id":  "ma_Bucket 1",
+        "text":  "Number of real solutions of sin x = x/2",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1",
+                        "2",
+                        "Infinite"
+                    ],
+        "correctAnswer":  "1"
+    },
+    {
+        "id":  "ma_Bucket 1",
+        "text":  "If determinant is zero, system has",
+        "type":  "choice",
+        "options":  [
+                        "unique solution",
+                        "no solution",
+                        "infinite or no solution",
+                        "exactly two solutions"
+                    ],
+        "correctAnswer":  "infinite or no solution"
+    },
+    {
+        "id":  "ma_Bucket 1",
+        "text":  "Maximum value of sin x + cos x",
+        "type":  "choice",
+        "options":  [
+                        "1",
+                        "√2",
+                        "2",
+                        "0"
+                    ],
+        "correctAnswer":  "√2"
+    },
+    {
+        "id":  "ma_Bucket 1",
+        "text":  "If roots equal, discriminant equals",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1",
+                        "−1",
+                        "undefined"
+                    ],
+        "correctAnswer":  "0"
+    },
+    {
+        "id":  "ma_Bucket 1",
+        "text":  "Range of x² + 4x + 5",
+        "type":  "choice",
+        "options":  [
+                        "≥0",
+                        "≥1",
+                        "≥2",
+                        "≥3"
+                    ],
+        "correctAnswer":  "≥1"
+    },
+    {
+        "id":  "ma_Bucket 1",
+        "text":  "Number of asymptotes of hyperbola",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1",
+                        "2",
+                        "3"
+                    ],
+        "correctAnswer":  "2"
+    },
+    {
+        "id":  "ma_Bucket 1",
+        "text":  "lim x→0 (1 − cos x)/x²",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1/2",
+                        "1",
+                        "∞"
+                    ],
+        "correctAnswer":  "1/2"
+    },
+    {
+        "id":  "ma_Bucket 1",
+        "text":  "If vectors perpendicular, dot product equals",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1",
+                        "−1",
+                        "∞"
+                    ],
+        "correctAnswer":  "0"
+    },
+    {
+        "id":  "ma_Bucket 2",
+        "text":  "Derivative of x²",
+        "type":  "choice",
+        "options":  [
+                        "x",
+                        "2x",
+                        "x²",
+                        "1"
+                    ],
+        "correctAnswer":  "2x"
+    },
+    {
+        "id":  "ma_Bucket 2",
+        "text":  "Integral of 1 dx",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "x",
+                        "1",
+                        "x²"
+                    ],
+        "correctAnswer":  "x"
+    },
+    {
+        "id":  "ma_Bucket 2",
+        "text":  "Distance between (0,0) and (3,4)",
+        "type":  "choice",
+        "options":  [
+                        "5",
+                        "6",
+                        "7",
+                        "4"
+                    ],
+        "correctAnswer":  "5"
+    },
+    {
+        "id":  "ma_Bucket 2",
+        "text":  "Slope of vertical line",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1",
+                        "∞",
+                        "−1"
+                    ],
+        "correctAnswer":  "∞"
+    },
+    {
+        "id":  "ma_Bucket 2",
+        "text":  "cos²x + sin²x equals",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1",
+                        "2",
+                        "−1"
+                    ],
+        "correctAnswer":  "1"
+    },
+    {
+        "id":  "ma_Bucket 2",
+        "text":  "If matrix determinant 0 means",
+        "type":  "choice",
+        "options":  [
+                        "singular",
+                        "identity",
+                        "scalar",
+                        "zero matrix"
+                    ],
+        "correctAnswer":  "singular"
+    },
+    {
+        "id":  "ma_Bucket 2",
+        "text":  "Domain of √x",
+        "type":  "choice",
+        "options":  [
+                        "x≥0",
+                        "x\u003e0",
+                        "all real",
+                        "x≤0"
+                    ],
+        "correctAnswer":  "x≥0"
+    },
+    {
+        "id":  "ma_Bucket 2",
+        "text":  "Probability maximum value",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1",
+                        "2",
+                        "∞"
+                    ],
+        "correctAnswer":  "1"
+    },
+    {
+        "id":  "ma_Bucket 2",
+        "text":  "Equation of circle center origin",
+        "type":  "choice",
+        "options":  [
+                        "x²+y²=r²",
+                        "x+y=r",
+                        "x−y=r",
+                        "none"
+                    ],
+        "correctAnswer":  "x²+y²=r²"
+    },
+    {
+        "id":  "ma_Bucket 2",
+        "text":  "sin 90° equals",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1",
+                        "−1",
+                        "∞"
+                    ],
+        "correctAnswer":  "1"
+    },
+    {
+        "id":  "ma_Bucket 3",
+        "text":  "log 1 equals",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1",
+                        "−1",
+                        "undefined"
+                    ],
+        "correctAnswer":  "0"
+    },
+    {
+        "id":  "ma_Bucket 3",
+        "text":  "log 10 equals (base 10)",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1",
+                        "10",
+                        "−1"
+                    ],
+        "correctAnswer":  "1"
+    },
+    {
+        "id":  "ma_Bucket 3",
+        "text":  "sin 0 equals",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1",
+                        "−1",
+                        "undefined"
+                    ],
+        "correctAnswer":  "0"
+    },
+    {
+        "id":  "ma_Bucket 3",
+        "text":  "cos 0 equals",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1",
+                        "−1",
+                        "∞"
+                    ],
+        "correctAnswer":  "1"
+    },
+    {
+        "id":  "ma_Bucket 3",
+        "text":  "tan 45 equals",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1",
+                        "−1",
+                        "√2"
+                    ],
+        "correctAnswer":  "1"
+    },
+    {
+        "id":  "ma_Bucket 3",
+        "text":  "derivative of constant",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1",
+                        "constant",
+                        "∞"
+                    ],
+        "correctAnswer":  "0"
+    },
+    {
+        "id":  "ma_Bucket 3",
+        "text":  "integral of 0",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "constant",
+                        "x",
+                        "none"
+                    ],
+        "correctAnswer":  "constant"
+    },
+    {
+        "id":  "ma_Bucket 3",
+        "text":  "probability minimum",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1",
+                        "−1",
+                        "∞"
+                    ],
+        "correctAnswer":  "0"
+    },
+    {
+        "id":  "ma_Bucket 3",
+        "text":  "√4 equals",
+        "type":  "choice",
+        "options":  [
+                        "1",
+                        "2",
+                        "−2",
+                        "both"
+                    ],
+        "correctAnswer":  "2"
+    },
+    {
+        "id":  "ma_Bucket 3",
+        "text":  "cube root of 8",
+        "type":  "choice",
+        "options":  [
+                        "1",
+                        "2",
+                        "3",
+                        "4"
+                    ],
+        "correctAnswer":  "2"
+    },
+    {
+        "id":  "ma_Bucket 4",
+        "text":  "2+2 equals",
+        "type":  "choice",
+        "options":  [
+                        "2",
+                        "3",
+                        "4",
+                        "5"
+                    ],
+        "correctAnswer":  "4"
+    },
+    {
+        "id":  "ma_Bucket 4",
+        "text":  "3×3 equals",
+        "type":  "choice",
+        "options":  [
+                        "6",
+                        "9",
+                        "12",
+                        "3"
+                    ],
+        "correctAnswer":  "9"
+    },
+    {
+        "id":  "ma_Bucket 4",
+        "text":  "10−5 equals",
+        "type":  "choice",
+        "options":  [
+                        "5",
+                        "10",
+                        "0",
+                        "−5"
+                    ],
+        "correctAnswer":  "5"
+    },
+    {
+        "id":  "ma_Bucket 4",
+        "text":  "6/2 equals",
+        "type":  "choice",
+        "options":  [
+                        "2",
+                        "3",
+                        "4",
+                        "6"
+                    ],
+        "correctAnswer":  "3"
+    },
+    {
+        "id":  "ma_Bucket 4",
+        "text":  "√9 equals",
+        "type":  "choice",
+        "options":  [
+                        "2",
+                        "3",
+                        "4",
+                        "5"
+                    ],
+        "correctAnswer":  "3"
+    },
+    {
+        "id":  "ma_Bucket 4",
+        "text":  "5² equals",
+        "type":  "choice",
+        "options":  [
+                        "10",
+                        "25",
+                        "20",
+                        "5"
+                    ],
+        "correctAnswer":  "25"
+    },
+    {
+        "id":  "ma_Bucket 4",
+        "text":  "cube of 2",
+        "type":  "choice",
+        "options":  [
+                        "4",
+                        "6",
+                        "8",
+                        "10"
+                    ],
+        "correctAnswer":  "8"
+    },
+    {
+        "id":  "ma_Bucket 4",
+        "text":  "log 100 base 10",
+        "type":  "choice",
+        "options":  [
+                        "1",
+                        "2",
+                        "10",
+                        "100"
+                    ],
+        "correctAnswer":  "2"
+    },
+    {
+        "id":  "ma_Bucket 4",
+        "text":  "sin 90",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1",
+                        "−1",
+                        "2"
+                    ],
+        "correctAnswer":  "1"
+    },
+    {
+        "id":  "ma_Bucket 4",
+        "text":  "cos 90",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1",
+                        "−1",
+                        "2"
+                    ],
+        "correctAnswer":  "0"
+    }
+]

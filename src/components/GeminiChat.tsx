@@ -24,21 +24,27 @@ export default function GeminiChat({ topics, mastery, mode = 'floating' }: Gemin
 
     // Initial Load
     useEffect(() => {
-        const history = db.getChatHistory(userId);
-        if (history.length > 0) {
-            setMessages(history);
-        } else {
-            setMessages([
-                { role: 'model', text: "Hello! I'm IDEA Master. How can I help you with your JEE preparation today?" }
-            ]);
-        }
+        const fetchHistory = async () => {
+            const history = await db.getChatHistory(userId);
+            if (history.length > 0) {
+                setMessages(history);
+            } else {
+                setMessages([
+                    { role: 'model', text: "Hello! I'm IDEA Master. How can I help you with your JEE preparation today?" }
+                ]);
+            }
+        };
+        fetchHistory();
     }, [userId]);
 
     // Save on change
     useEffect(() => {
-        if (messages.length > 0) {
-            db.saveChatHistory(messages, userId);
-        }
+        const saveHistory = async () => {
+            if (messages.length > 0) {
+                await db.saveChatHistory(messages, userId);
+            }
+        };
+        saveHistory();
     }, [messages, userId]);
 
     // Auto scroll
@@ -50,11 +56,11 @@ export default function GeminiChat({ topics, mastery, mode = 'floating' }: Gemin
         if (mode === 'inline') setIsOpen(true);
     }, [mode]);
 
-    const handleClear = () => {
+    const handleClear = async () => {
         if (window.confirm("Are you sure you want to clear your chat history?")) {
             const initialMessage: ChatMessage[] = [{ role: 'model', text: "Hello! I'm IDEA Master. How can I help you with your JEE preparation today?" }];
             setMessages(initialMessage);
-            db.saveChatHistory(initialMessage, userId);
+            await db.saveChatHistory(initialMessage, userId);
         }
     };
 

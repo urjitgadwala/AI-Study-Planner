@@ -24,21 +24,27 @@ export default function ProgressPage() {
 
     React.useEffect(() => {
         setMounted(true);
-        setTopics(db.getTopics(userId));
-        setMastery(db.getMastery(userId));
+        const fetchData = async () => {
+            const loadedTopics = await db.getTopics(userId);
+            const loadedMastery = await db.getMastery(userId);
+            setTopics(loadedTopics);
+            setMastery(loadedMastery);
+        };
+        fetchData();
     }, [userId]);
 
     if (!mounted) {
         return <div className="min-h-screen bg-background" />;
     }
 
-    const handleDelete = (topicId: string) => {
-        db.deleteTopic(topicId, userId);
-        setTopics(db.getTopics(userId));
+    const handleDelete = async (topicId: string) => {
+        await db.deleteTopic(topicId, userId);
+        const loadedTopics = await db.getTopics(userId);
+        setTopics(loadedTopics);
         setDeletingTopicId(null);
     };
 
-    const handleAssessmentComplete = (result: any) => {
+    const handleAssessmentComplete = async (result: any) => {
         if (!assessingTopic) return;
 
         const newEntry: StudentMastery = {
@@ -52,7 +58,7 @@ export default function ProgressPage() {
 
         const newMastery = [...mastery.filter(m => m.topicId !== assessingTopic.id), newEntry];
         setMastery(newMastery);
-        db.saveMastery(newMastery, userId);
+        await db.saveMastery(newMastery, userId);
         setAssessingTopic(null);
 
         confetti({

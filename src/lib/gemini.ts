@@ -3,6 +3,7 @@
  */
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Topic } from './types';
+import topicsData from './topics.json';
 
 export interface AnalysisResult {
     summary: string;
@@ -141,17 +142,38 @@ export async function parseSyllabusFromText(text: string): Promise<Topic[]> {
     }, [], "Parse Syllabus");
 }
 
+import physicsQuestions from './physicsQuestions.json';
+import chemistryQuestions from './chemistryQuestions.json';
+import mathQuestions from './mathQuestions.json';
+
 export async function generateDiagnosticQuestions(topicName: string): Promise<DiagnosticQuestion[]> {
-    const fallback: DiagnosticQuestion[] = [
+    // Find the subject for this topic
+    const topics = topicsData as Topic[];
+    const topic = topics.find(t => t.name.toLowerCase() === topicName.toLowerCase());
+    const subject = topic?.subject || 'Physics'; // Default to Physics if not found
+
+    let subjectFallbacks: DiagnosticQuestion[] = [];
+    if (subject === 'Physics') subjectFallbacks = physicsQuestions as DiagnosticQuestion[];
+    else if (subject === 'Chemistry') subjectFallbacks = chemistryQuestions as DiagnosticQuestion[];
+    else if (subject === 'Math') subjectFallbacks = mathQuestions as DiagnosticQuestion[];
+
+    // Select 5 random questions from the subject fallbacks
+    const shuffled = [...subjectFallbacks].sort(() => 0.5 - Math.random());
+    const fallback = shuffled.slice(0, 5);
+
+    // If no specific fallbacks found, use the generic ones
+    const genericFallback: DiagnosticQuestion[] = [
         { id: 'f1', text: `Briefly explain the physical significance of ${topicName}.`, type: 'text' },
         { id: 'f2', text: `Which sub-concept of ${topicName} do you find most challenging?`, type: 'choice', options: ['Theoretical Foundations', 'Numerical Application', 'Interdisciplinary Links', 'Formula Derivation'] },
         { id: 'f3', text: `On a scale of 1-4, how confident are you with JEE Advanced level problems in ${topicName}?`, type: 'choice', options: ['1 - Basics only', '2 - Average', '3 - Above average', '4 - Expert'] },
         { id: 'f4', text: `Provide a quick summary of your current progress in ${topicName}.`, type: 'text' }
     ];
 
+    const finalFallback = fallback.length > 0 ? fallback : genericFallback;
+
     return runWithRetry(async (model) => {
         const prompt = `
-            Generate 5 diagnostic questions for a JEE aspirant to assess their mastery of the topic: "${topicName}".
+            Generate 5 diagnostic questions for a JEE aspirant to assess their mastery of the topic: "${topicName}" (${subject}).
             Return ONLY a JSON array:
             [
                 { "id": "q1", "text": "Question?", "type": "choice", "options": ["A", "B", "C", "D"], "correctAnswer": "A" },
@@ -163,7 +185,7 @@ export async function generateDiagnosticQuestions(topicName: string): Promise<Di
         const text = (await result.response).text();
         const cleanText = text.replace(/```json|```/g, "").trim();
         return JSON.parse(cleanText);
-    }, fallback, "Generate Questions");
+    }, finalFallback, "Generate Questions");
 }
 
 export async function evaluateDiagnosticPerformance(

@@ -9,6 +9,7 @@ export interface TimeSlot {
     tier: number;           // Assessment tier (1-5)
     confidenceScore: number; // 0-100 from assessment
     isCompleted: boolean;
+    isBreak?: boolean;
 }
 
 /**
@@ -36,32 +37,46 @@ export const generateDailyTimetable = (
     topics: Topic[],
     mastery: StudentMastery[],
     startHour: number = 9,
-    endHour: number = 17
+    endHour: number = 17,
+    breakMinutes: number = 0
 ): TimeSlot[] => {
     const endMinutesLimit = endHour * 60;
 
-    // ONLY include topics that have been assessed (have a mastery record)
-    // and are not yet fully mastered (tier < 5 or not completed)
-    const assessedTopics = topics.filter(t => {
+    // Include topics that:
+    // 1. Have been assessed and are not completed
+    // 2. Have NOT been assessed (to provide a starting point)
+    const eligibleTopics = topics.filter(t => {
         const m = mastery.find(m => m.topicId === t.id);
-        return m !== undefined && (!m.isCompleted || m.currentTier < 5);
+        if (!m) return true; // Unassessed is eligible
+        return !m.isCompleted || m.currentTier < 5;
     });
 
-    if (assessedTopics.length === 0) return [];
+    if (eligibleTopics.length === 0) return [];
 
-    // Sort: interleave subjects (P, C, M) and within each subject sort by tier ascending
-    // (weakest topics first so they get scheduled when energy is highest)
+    // Prioritize assessed topics first, then high-weightage unassessed topics
+    const assessed = eligibleTopics.filter(t => mastery.some(m => m.topicId === t.id));
+    const unassessed = eligibleTopics.filter(t => !mastery.some(m => m.topicId === t.id))
+        .sort((a, b) => b.weightage - a.weightage);
+
+    // Take all assessed, and fill up to 10 total topics with unassessed
+    const studyPool = [...assessed, ...unassessed.slice(0, Math.max(0, 10 - assessed.length))];
+
+    // Sort: interleave subjects (P, C, M)
     const bySubject: Record<string, Topic[]> = { Physics: [], Chemistry: [], Math: [] };
-    assessedTopics.forEach(t => {
+    studyPool.forEach(t => {
         if (bySubject[t.subject]) bySubject[t.subject].push(t);
     });
 
-    // Sort each subject by tier ascending (lower tier = needs more work = schedule first)
+    // Sort each subject: assessed (by tier) then unassessed (by weightage)
     Object.keys(bySubject).forEach(subj => {
         bySubject[subj].sort((a, b) => {
-            const ma = mastery.find(m => m.topicId === a.id)!;
-            const mb = mastery.find(m => m.topicId === b.id)!;
-            return ma.currentTier - mb.currentTier;
+            const ma = mastery.find(m => m.topicId === a.id);
+            const mb = mastery.find(m => m.topicId === b.id);
+
+            if (ma && mb) return ma.currentTier - mb.currentTier;
+            if (ma) return -1; // Assessed comes first
+            if (mb) return 1;
+            return b.weightage - a.weightage; // Both unassessed: higher weightage first
         });
     });
 
@@ -80,13 +95,13 @@ export const generateDailyTimetable = (
     for (const t of orderedTopics) {
         if (currentMinutes >= endMinutesLimit) break;
 
-        const m = mastery.find(m => m.topicId === t.id)!;
-        const tier = m.currentTier;
+        const m = mastery.find(m => m.topicId === t.id);
+        const tier = m?.currentTier ?? 1;
 
         // Fixed time per tier — adjusted by confidence score
         // Lower confidence within a tier → add up to 15 extra minutes
         const baseMins = TIER_MINUTES[tier] ?? 60;
-        const confidenceBonus = Math.round((1 - (m.confidenceScore / 100)) * 15);
+        const confidenceBonus = Math.round((1 - ((m?.confidenceScore ?? 0) / 100)) * 15);
         const durationMinutes = Math.min(baseMins + confidenceBonus, 90);
 
         const slotEnd = Math.min(currentMinutes + durationMinutes, endMinutesLimit);
@@ -105,11 +120,35 @@ export const generateDailyTimetable = (
             topicName: t.name,
             subject: t.subject,
             tier,
-            confidenceScore: m.confidenceScore,
-            isCompleted: m.isCompleted,
+            confidenceScore: m?.confidenceScore ?? 0,
+            isCompleted: m?.isCompleted ?? false,
         });
 
         currentMinutes = slotEnd;
+
+        // Add break if requested and not the last topic
+        if (breakMinutes > 0 && currentMinutes < endMinutesLimit) {
+            const breakEnd = Math.min(currentMinutes + breakMinutes, endMinutesLimit);
+            if (breakEnd > currentMinutes) {
+                const bStartH = Math.floor(currentMinutes / 60);
+                const bStartM = currentMinutes % 60;
+                const bEndH = Math.floor(breakEnd / 60);
+                const bEndM = breakEnd % 60;
+
+                timetable.push({
+                    startTime: `${bStartH.toString().padStart(2, '0')}:${bStartM.toString().padStart(2, '0')}`,
+                    endTime: `${bEndH.toString().padStart(2, '0')}:${bEndM.toString().padStart(2, '0')}`,
+                    topicId: 'break',
+                    topicName: 'Break',
+                    subject: 'Break',
+                    tier: 0,
+                    confidenceScore: 0,
+                    isCompleted: false,
+                    isBreak: true,
+                });
+                currentMinutes = breakEnd;
+            }
+        }
     }
 
     return timetable;

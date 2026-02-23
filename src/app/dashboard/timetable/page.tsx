@@ -26,6 +26,12 @@ const SUBJECT_COLORS: Record<string, { bg: string; text: string; border: string;
         border: "border-violet-200 dark:border-violet-800",
         dot: "bg-violet-500",
     },
+    Break: {
+        bg: "bg-gray-50 dark:bg-gray-900/40",
+        text: "text-gray-500 dark:text-gray-400",
+        border: "border-gray-200 dark:border-gray-800",
+        dot: "bg-gray-400",
+    },
 };
 
 const TIER_LABELS: Record<number, { label: string; color: string }> = {
@@ -71,25 +77,30 @@ export default function TimetablePage() {
     const [timetable, setTimetable] = useState<TimeSlot[]>([]);
     const [startHour, setStartHour] = useState(9);
     const [endHour, setEndHour] = useState(17);
+    const [breakMinutes, setBreakMinutes] = useState(0);
     const [completedSlots, setCompletedSlots] = useState<Set<string>>(new Set());
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
         setMounted(true);
-        const t = db.getTopics(userId);
-        const m = db.getMastery(userId);
-        const p = db.getProfile(userId);
-        setTopics(t);
-        setMastery(m);
-        setProfile(p);
-        if (p) {
-            setTimetable(generateDailyTimetable(p, t, m, 9, 17));
-        }
+        const fetchData = async () => {
+            const t = await db.getTopics(userId);
+            const m = await db.getMastery(userId);
+            const p = await db.getProfile(userId);
+            setTopics(t);
+            setMastery(m);
+            setProfile(p);
+            if (p) {
+                setTimetable(generateDailyTimetable(p, t, m, 9, 17, 15));
+                setBreakMinutes(15);
+            }
+        };
+        fetchData();
     }, [userId]);
 
     const regenerate = () => {
         if (profile && endHour > startHour) {
-            setTimetable(generateDailyTimetable(profile, topics, mastery, startHour, endHour));
+            setTimetable(generateDailyTimetable(profile, topics, mastery, startHour, endHour, breakMinutes));
             setCompletedSlots(new Set());
         }
     };
@@ -107,14 +118,15 @@ export default function TimetablePage() {
         weekday: "long", year: "numeric", month: "long", day: "numeric",
     });
 
-    const totalMinutes = timetable.reduce((acc, slot) => {
+    const studySessions = timetable.filter(s => !s.isBreak);
+    const totalMinutes = studySessions.reduce((acc, slot) => {
         const [sh, sm] = slot.startTime.split(":").map(Number);
         const [eh, em] = slot.endTime.split(":").map(Number);
         return acc + (eh * 60 + em) - (sh * 60 + sm);
     }, 0);
 
     const completedCount = completedSlots.size;
-    const progressPct = timetable.length > 0 ? Math.round((completedCount / timetable.length) * 100) : 0;
+    const progressPct = studySessions.length > 0 ? Math.round((completedCount / studySessions.length) * 100) : 0;
 
     const subjectSummary = ["Physics", "Chemistry", "Math"].map(subj => ({
         subject: subj,
@@ -149,7 +161,9 @@ export default function TimetablePage() {
                             className="px-3 py-2 bg-secondary border border-border rounded-xl text-sm font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
                         >
                             {Array.from({ length: 19 }, (_, i) => i + 4).map(h => (
-                                <option key={h} value={h} disabled={h >= endHour}>{hourLabel(h)}</option>
+                                <option key={h} value={h} disabled={h >= endHour} className="bg-background text-foreground">
+                                    {hourLabel(h)}
+                                </option>
                             ))}
                         </select>
                     </div>
@@ -161,8 +175,24 @@ export default function TimetablePage() {
                             className="px-3 py-2 bg-secondary border border-border rounded-xl text-sm font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
                         >
                             {Array.from({ length: 19 }, (_, i) => i + 4).map(h => (
-                                <option key={h} value={h} disabled={h <= startHour}>{hourLabel(h)}</option>
+                                <option key={h} value={h} disabled={h <= startHour} className="bg-background text-foreground">
+                                    {hourLabel(h)}
+                                </option>
                             ))}
+                        </select>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <label className="text-sm font-bold text-muted-foreground whitespace-nowrap">Break:</label>
+                        <select
+                            value={breakMinutes}
+                            onChange={e => setBreakMinutes(Number(e.target.value))}
+                            className="px-3 py-2 bg-secondary border border-border rounded-xl text-sm font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                        >
+                            <option value={0} className="bg-background text-foreground">None</option>
+                            <option value={15} className="bg-background text-foreground">15 mins</option>
+                            <option value={30} className="bg-background text-foreground">30 mins</option>
+                            <option value={45} className="bg-background text-foreground">45 mins</option>
+                            <option value={60} className="bg-background text-foreground">1 hour</option>
                         </select>
                     </div>
                     <button
@@ -179,9 +209,9 @@ export default function TimetablePage() {
             {/* Stats Row */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                    { label: "Total Sessions", value: timetable.length, icon: BookOpen, color: "text-primary" },
+                    { label: "Total Sessions", value: studySessions.length, icon: BookOpen, color: "text-primary" },
                     { label: "Study Time", value: `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m`, icon: Clock, color: "text-amber-500" },
-                    { label: "Completed", value: `${completedCount}/${timetable.length}`, icon: CheckCircle2, color: "text-emerald-500" },
+                    { label: "Completed", value: `${completedCount}/${studySessions.length}`, icon: CheckCircle2, color: "text-emerald-500" },
                     { label: "Progress", value: `${progressPct}%`, icon: Zap, color: "text-violet-500" },
                 ].map(stat => (
                     <div key={stat.label} className="bg-card border border-border rounded-2xl p-5 flex items-center gap-4">
@@ -226,9 +256,9 @@ export default function TimetablePage() {
                     <div className="w-20 h-20 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-6">
                         <Calendar className="w-10 h-10 text-muted-foreground" />
                     </div>
-                    <h3 className="text-xl font-black text-foreground mb-2">No Assessed Topics Found</h3>
+                    <h3 className="text-xl font-black text-foreground mb-2">No Study Topics Found</h3>
                     <p className="text-muted-foreground font-medium max-w-sm mx-auto mb-4">
-                        Your timetable is built from your <strong>assessment results</strong>. Go to the Dashboard, add topics, and complete the AI assessment for each one.
+                        Your timetable is built from your syllabus. Go to the Dashboard and add topics or complete assessments to see your daily roadmap.
                     </p>
                     <div className="inline-flex flex-col gap-2 text-left text-sm bg-secondary/60 border border-border rounded-2xl p-4 max-w-xs mx-auto">
                         <div className="flex items-center gap-2 text-muted-foreground font-bold">
@@ -257,6 +287,31 @@ export default function TimetablePage() {
                         const isDone = completedSlots.has(slotKey);
                         const duration = formatDuration(slot.startTime, slot.endTime);
                         const tierInfo = TIER_LABELS[slot.tier] || TIER_LABELS[1];
+
+                        if (slot.isBreak) {
+                            return (
+                                <div
+                                    key={idx}
+                                    className={`flex items-center gap-4 p-4 rounded-2xl border bg-secondary/20 border-border/50 border-dashed opacity-80`}
+                                >
+                                    <div className="hidden sm:flex flex-col items-center min-w-[90px] bg-card/40 rounded-xl p-2 border border-border/30">
+                                        <span className="text-xs font-bold text-muted-foreground">{formatTime12(slot.startTime)}</span>
+                                        <div className="w-full h-px bg-border/50 my-1" />
+                                        <span className="text-xs font-bold text-muted-foreground">{formatTime12(slot.endTime)}</span>
+                                    </div>
+                                    <div className="hidden sm:flex flex-col items-center shrink-0">
+                                        <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/30" />
+                                        <div className="w-0.5 h-6 bg-border/30" />
+                                    </div>
+                                    <div className="flex-grow">
+                                        <p className="font-bold text-sm text-muted-foreground flex items-center gap-2">
+                                            <Clock className="w-4 h-4" />
+                                            {slot.topicName} ({duration})
+                                        </p>
+                                    </div>
+                                </div>
+                            );
+                        }
 
                         return (
                             <div

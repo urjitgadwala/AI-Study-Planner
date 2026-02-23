@@ -10,19 +10,25 @@ export default function PointsPage() {
     const { data: session } = useSession();
     const userId = session?.user?.email || 'default_user';
 
+    const [profile, setProfile] = React.useState<any>(null);
+    const [focusLogs, setFocusLogs] = React.useState<any[]>([]);
+
     React.useEffect(() => {
         setMounted(true);
-    }, []);
+        const fetchData = async () => {
+            const loadedProfile = await db.getProfile(userId);
+            const loadedLogs = await db.getFocusLogs(userId);
+            setProfile(loadedProfile);
+            setFocusLogs(loadedLogs);
+        };
+        fetchData();
+    }, [userId]);
 
-    if (!mounted) {
-        return <div className="min-h-screen bg-background" />;
-    }
-
-    const profile = db.getProfile(userId);
-    const focusLogs = db.getFocusLogs(userId);
     const totalFocusMinutes = focusLogs.reduce((acc, log) => acc + (log.actualMinutes || 0), 0);
 
-    if (!profile) return null;
+    if (!mounted || !profile) {
+        return <div className="min-h-screen bg-background" />;
+    }
 
     return (
         <div className="space-y-8 text-center max-w-4xl mx-auto py-12">
@@ -57,7 +63,7 @@ export default function PointsPage() {
             <div className="bg-card p-8 rounded-3xl border border-border shadow-sm text-left">
                 <h2 className="text-xl font-bold text-foreground mb-8">Badges & Accomplishments</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-                    {profile.badges?.map((badge, i) => (
+                    {profile.badges?.map((badge: string, i: number) => (
                         <div key={i} className="flex flex-col items-center gap-3 p-4 bg-secondary/50 rounded-2xl border border-border">
                             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                                 <Medal className="w-6 h-6" />

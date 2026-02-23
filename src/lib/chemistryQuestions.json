@@ -1,0 +1,482 @@
+[
+    {
+        "id":  "ch_Bucket 1",
+        "text":  "Which has highest lattice energy",
+        "type":  "choice",
+        "options":  [
+                        "NaCl",
+                        "MgO",
+                        "KCl",
+                        "CaO"
+                    ],
+        "correctAnswer":  "MgO"
+    },
+    {
+        "id":  "ch_Bucket 1",
+        "text":  "Which has highest ionization energy",
+        "type":  "choice",
+        "options":  [
+                        "Na",
+                        "Mg",
+                        "Al",
+                        "Si"
+                    ],
+        "correctAnswer":  "Si"
+    },
+    {
+        "id":  "ch_Bucket 1",
+        "text":  "Strongest oxidizing agent",
+        "type":  "choice",
+        "options":  [
+                        "F₂",
+                        "Cl₂",
+                        "Br₂",
+                        "I₂"
+                    ],
+        "correctAnswer":  "F₂"
+    },
+    {
+        "id":  "ch_Bucket 1",
+        "text":  "Hybridization of SF₆",
+        "type":  "choice",
+        "options":  [
+                        "sp",
+                        "sp²",
+                        "sp³",
+                        "sp³d²"
+                    ],
+        "correctAnswer":  "sp³d²"
+    },
+    {
+        "id":  "ch_Bucket 1",
+        "text":  "Most acidic hydrogen",
+        "type":  "choice",
+        "options":  [
+                        "Alkane",
+                        "Alkene",
+                        "Alkyne",
+                        "Alcohol"
+                    ],
+        "correctAnswer":  "Alkyne"
+    },
+    {
+        "id":  "ch_Bucket 1",
+        "text":  "Highest boiling point",
+        "type":  "choice",
+        "options":  [
+                        "H₂O",
+                        "H₂S",
+                        "H₂Se",
+                        "H₂Te"
+                    ],
+        "correctAnswer":  "H₂O"
+    },
+    {
+        "id":  "ch_Bucket 1",
+        "text":  "Most stable carbocation",
+        "type":  "choice",
+        "options":  [
+                        "1°",
+                        "2°",
+                        "3°",
+                        "methyl"
+                    ],
+        "correctAnswer":  "3°"
+    },
+    {
+        "id":  "ch_Bucket 1",
+        "text":  "Shape of XeF₄",
+        "type":  "choice",
+        "options":  [
+                        "tetrahedral",
+                        "square planar",
+                        "trigonal planar",
+                        "linear"
+                    ],
+        "correctAnswer":  "square planar"
+    },
+    {
+        "id":  "ch_Bucket 1",
+        "text":  "Highest electronegativity",
+        "type":  "choice",
+        "options":  [
+                        "F",
+                        "O",
+                        "Cl",
+                        "N"
+                    ],
+        "correctAnswer":  "F"
+    },
+    {
+        "id":  "ch_Bucket 1",
+        "text":  "Most basic",
+        "type":  "choice",
+        "options":  [
+                        "NH₃",
+                        "PH₃",
+                        "AsH₃",
+                        "SbH₃"
+                    ],
+        "correctAnswer":  "NH₃"
+    },
+    {
+        "id":  "ch_Bucket 2",
+        "text":  "Oxidation number of S in H₂SO₄",
+        "type":  "choice",
+        "options":  [
+                        "2",
+                        "4",
+                        "6",
+                        "−2"
+                    ],
+        "correctAnswer":  "6"
+    },
+    {
+        "id":  "ch_Bucket 2",
+        "text":  "Hybridization of CO₂",
+        "type":  "choice",
+        "options":  [
+                        "sp",
+                        "sp²",
+                        "sp³",
+                        "sp³d"
+                    ],
+        "correctAnswer":  "sp"
+    },
+    {
+        "id":  "ch_Bucket 2",
+        "text":  "Number of moles in 22g CO₂",
+        "type":  "choice",
+        "options":  [
+                        "0.5",
+                        "1",
+                        "2",
+                        "22"
+                    ],
+        "correctAnswer":  "0.5"
+    },
+    {
+        "id":  "ch_Bucket 2",
+        "text":  "Shape of BF₃",
+        "type":  "choice",
+        "options":  [
+                        "linear",
+                        "trigonal planar",
+                        "tetrahedral",
+                        "bent"
+                    ],
+        "correctAnswer":  "trigonal planar"
+    },
+    {
+        "id":  "ch_Bucket 2",
+        "text":  "Strongest acid",
+        "type":  "choice",
+        "options":  [
+                        "HCl",
+                        "HBr",
+                        "HI",
+                        "HF"
+                    ],
+        "correctAnswer":  "HI"
+    },
+    {
+        "id":  "ch_Bucket 2",
+        "text":  "Most reactive metal",
+        "type":  "choice",
+        "options":  [
+                        "Na",
+                        "K",
+                        "Li",
+                        "Cs"
+                    ],
+        "correctAnswer":  "Cs"
+    },
+    {
+        "id":  "ch_Bucket 2",
+        "text":  "Highest boiling noble gas",
+        "type":  "choice",
+        "options":  [
+                        "He",
+                        "Ne",
+                        "Ar",
+                        "Xe"
+                    ],
+        "correctAnswer":  "Xe"
+    },
+    {
+        "id":  "ch_Bucket 2",
+        "text":  "Oxidation state of O in peroxide",
+        "type":  "choice",
+        "options":  [
+                        "−1",
+                        "−2",
+                        "0",
+                        "1"
+                    ],
+        "correctAnswer":  "−1"
+    },
+    {
+        "id":  "ch_Bucket 2",
+        "text":  "Functional group of alcohol",
+        "type":  "choice",
+        "options":  [
+                        "−OH",
+                        "−COOH",
+                        "−CHO",
+                        "−NH₂"
+                    ],
+        "correctAnswer":  "−OH"
+    },
+    {
+        "id":  "ch_Bucket 2",
+        "text":  "pH of neutral solution",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "7",
+                        "14",
+                        "1"
+                    ],
+        "correctAnswer":  "7"
+    },
+    {
+        "id":  "ch_Bucket 3",
+        "text":  "Atomic number equals",
+        "type":  "choice",
+        "options":  [
+                        "protons",
+                        "neutrons",
+                        "mass",
+                        "electrons+neutrons"
+                    ],
+        "correctAnswer":  "protons"
+    },
+    {
+        "id":  "ch_Bucket 3",
+        "text":  "Mass number equals",
+        "type":  "choice",
+        "options":  [
+                        "p+n",
+                        "p",
+                        "n",
+                        "e"
+                    ],
+        "correctAnswer":  "p+n"
+    },
+    {
+        "id":  "ch_Bucket 3",
+        "text":  "Avogadro number",
+        "type":  "choice",
+        "options":  [
+                        "6.022×10²³",
+                        "10²³",
+                        "10²²",
+                        "6×10²²"
+                    ],
+        "correctAnswer":  "6.022×10²³"
+    },
+    {
+        "id":  "ch_Bucket 3",
+        "text":  "Mole contains",
+        "type":  "choice",
+        "options":  [
+                        "atoms",
+                        "molecules",
+                        "particles",
+                        "all"
+                    ],
+        "correctAnswer":  "all"
+    },
+    {
+        "id":  "ch_Bucket 3",
+        "text":  "SI unit of molarity",
+        "type":  "choice",
+        "options":  [
+                        "mol/L",
+                        "mol",
+                        "L",
+                        "g"
+                    ],
+        "correctAnswer":  "mol/L"
+    },
+    {
+        "id":  "ch_Bucket 3",
+        "text":  "Electron charge",
+        "type":  "choice",
+        "options":  [
+                        "−1",
+                        "1",
+                        "0",
+                        "−2"
+                    ],
+        "correctAnswer":  "−1"
+    },
+    {
+        "id":  "ch_Bucket 3",
+        "text":  "Proton charge",
+        "type":  "choice",
+        "options":  [
+                        "1",
+                        "−1",
+                        "0",
+                        "2"
+                    ],
+        "correctAnswer":  "1"
+    },
+    {
+        "id":  "ch_Bucket 3",
+        "text":  "Neutron charge",
+        "type":  "choice",
+        "options":  [
+                        "0",
+                        "1",
+                        "−1",
+                        "2"
+                    ],
+        "correctAnswer":  "0"
+    },
+    {
+        "id":  "ch_Bucket 3",
+        "text":  "Lightest element",
+        "type":  "choice",
+        "options":  [
+                        "H",
+                        "He",
+                        "Li",
+                        "O"
+                    ],
+        "correctAnswer":  "H"
+    },
+    {
+        "id":  "ch_Bucket 3",
+        "text":  "Heaviest noble gas",
+        "type":  "choice",
+        "options":  [
+                        "He",
+                        "Ne",
+                        "Ar",
+                        "Xe"
+                    ],
+        "correctAnswer":  "Xe"
+    },
+    {
+        "id":  "ch_Bucket 4",
+        "text":  "Symbol of Sodium",
+        "type":  "choice",
+        "options":  [
+                        "Na",
+                        "S",
+                        "N",
+                        "So"
+                    ],
+        "correctAnswer":  "Na"
+    },
+    {
+        "id":  "ch_Bucket 4",
+        "text":  "Symbol of Oxygen",
+        "type":  "choice",
+        "options":  [
+                        "O",
+                        "Ox",
+                        "Om",
+                        "Og"
+                    ],
+        "correctAnswer":  "O"
+    },
+    {
+        "id":  "ch_Bucket 4",
+        "text":  "Atomic number of Hydrogen",
+        "type":  "choice",
+        "options":  [
+                        "1",
+                        "2",
+                        "3",
+                        "0"
+                    ],
+        "correctAnswer":  "1"
+    },
+    {
+        "id":  "ch_Bucket 4",
+        "text":  "Atomic number of Carbon",
+        "type":  "choice",
+        "options":  [
+                        "6",
+                        "12",
+                        "14",
+                        "8"
+                    ],
+        "correctAnswer":  "6"
+    },
+    {
+        "id":  "ch_Bucket 4",
+        "text":  "Water formula",
+        "type":  "choice",
+        "options":  [
+                        "H₂O",
+                        "HO₂",
+                        "H₂O₂",
+                        "OH"
+                    ],
+        "correctAnswer":  "H₂O"
+    },
+    {
+        "id":  "ch_Bucket 4",
+        "text":  "Carbon valency",
+        "type":  "choice",
+        "options":  [
+                        "2",
+                        "3",
+                        "4",
+                        "5"
+                    ],
+        "correctAnswer":  "4"
+    },
+    {
+        "id":  "ch_Bucket 4",
+        "text":  "Oxygen valency",
+        "type":  "choice",
+        "options":  [
+                        "1",
+                        "2",
+                        "3",
+                        "4"
+                    ],
+        "correctAnswer":  "2"
+    },
+    {
+        "id":  "ch_Bucket 4",
+        "text":  "Hydrogen valency",
+        "type":  "choice",
+        "options":  [
+                        "1",
+                        "2",
+                        "3",
+                        "0"
+                    ],
+        "correctAnswer":  "1"
+    },
+    {
+        "id":  "ch_Bucket 4",
+        "text":  "Gas essential for breathing",
+        "type":  "choice",
+        "options":  [
+                        "O₂",
+                        "CO₂",
+                        "N₂",
+                        "H₂"
+                    ],
+        "correctAnswer":  "O₂"
+    },
+    {
+        "id":  "ch_Bucket 4",
+        "text":  "Gas used in balloons",
+        "type":  "choice",
+        "options":  [
+                        "He",
+                        "O₂",
+                        "N₂",
+                        "CO₂"
+                    ],
+        "correctAnswer":  "He"
+    }
+]

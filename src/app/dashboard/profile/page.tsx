@@ -17,23 +17,25 @@ export default function ProfilePage() {
 
     useEffect(() => {
         setMounted(true);
-        const data = db.getProfile(userId);
-        setProfile(data);
+        const fetchData = async () => {
+            const data = await db.getProfile(userId);
+            setProfile(data);
+        };
+        fetchData();
     }, [userId]);
 
     if (!mounted || !profile) {
         return <div className="min-h-screen bg-background" />;
     }
 
-    const handleSave = (e: React.FormEvent) => {
+    const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!profile) return;
         setIsSaving(true);
-        db.saveProfile(profile, userId);
-        setTimeout(() => {
-            setIsSaving(false);
-            setShowSavedMsg(true);
-            setTimeout(() => setShowSavedMsg(false), 3000);
-        }, 800);
+        await db.saveProfile(profile, userId);
+        setIsSaving(false);
+        setShowSavedMsg(true);
+        setTimeout(() => setShowSavedMsg(false), 3000);
     };
 
     const handleChange = (field: keyof UserProfile, value: any) => {

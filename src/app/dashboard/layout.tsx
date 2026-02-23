@@ -26,18 +26,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const [showPdfImport, setShowPdfImport] = React.useState(false);
     const [topics, setTopics] = React.useState<Topic[]>([]);
     const [mastery, setMastery] = React.useState<StudentMastery[]>([]);
+    const [profile, setProfile] = React.useState<any>(null);
 
     React.useEffect(() => {
         setMounted(true);
-        setTopics(db.getTopics(userId));
-        setMastery(db.getMastery(userId));
+        const fetchData = async () => {
+            const [t, m, p] = await Promise.all([
+                db.getTopics(userId),
+                db.getMastery(userId),
+                db.getProfile(userId)
+            ]);
+            setTopics(t);
+            setMastery(m);
+            setProfile(p);
+        };
+        fetchData();
     }, [userId]);
 
     if (!mounted) {
         return <div className="min-h-screen bg-background" />;
     }
 
-    const profile = db.getProfile(userId);
 
     const navItems = [
         { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -174,8 +183,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             topics={topics}
                             userId={userId}
                             onCancel={() => setShowDeleteModal(false)}
-                            onTopicsDeleted={() => {
-                                setTopics(db.getTopics(userId));
+                            onTopicsDeleted={async () => {
+                                const t = await db.getTopics(userId);
+                                setTopics(t);
                                 setShowDeleteModal(false);
                                 window.location.reload();
                             }}
@@ -189,11 +199,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
                     <div className="w-full max-w-xl">
                         <TopicInput
-                            onTopicsAdded={(newTopics) => {
-                                const currentTopics = db.getTopics(userId);
+                            onTopicsAdded={async (newTopics) => {
+                                const currentTopics = await db.getTopics(userId);
                                 const updatedUserTopics = [...currentTopics.filter(t => t.id.startsWith('u_')), ...newTopics];
-                                db.saveTopics(updatedUserTopics, userId);
-                                setTopics(db.getTopics(userId));
+                                await db.saveTopics(updatedUserTopics, userId);
+                                const updated = await db.getTopics(userId);
+                                setTopics(updated);
                                 setShowTopicInput(false);
                                 window.location.reload();
                             }}
@@ -208,11 +219,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
                     <div className="w-full max-w-xl">
                         <PdfImportModal
-                            onTopicsAdded={(newTopics) => {
-                                const currentTopics = db.getTopics(userId);
+                            onTopicsAdded={async (newTopics) => {
+                                const currentTopics = await db.getTopics(userId);
                                 const updatedUserTopics = [...currentTopics.filter(t => t.id.startsWith('u_')), ...newTopics];
-                                db.saveTopics(updatedUserTopics, userId);
-                                setTopics(db.getTopics(userId));
+                                await db.saveTopics(updatedUserTopics, userId);
+                                const updated = await db.getTopics(userId);
+                                setTopics(updated);
                                 setShowPdfImport(false);
                                 window.location.reload();
                             }}

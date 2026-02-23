@@ -5,22 +5,26 @@ import GeminiChat from '@/components/GeminiChat';
 import { db } from '@/lib/db';
 import { useSession } from 'next-auth/react';
 import { Bot, Sparkles } from 'lucide-react';
+import { Topic, StudentMastery } from '@/lib/types';
 
 export default function TutorPage() {
     const [mounted, setMounted] = React.useState(false);
     const { data: session } = useSession();
     const userId = session?.user?.email || 'default_user';
 
+    const [topics, setTopics] = React.useState<Topic[]>([]);
+    const [mastery, setMastery] = React.useState<StudentMastery[]>([]);
+
     React.useEffect(() => {
         setMounted(true);
-    }, []);
-
-    if (!mounted) {
-        return <div className="min-h-screen bg-background" />;
-    }
-
-    const topics = db.getTopics(userId);
-    const mastery = db.getMastery(userId);
+        const fetchData = async () => {
+            const loadedTopics = await db.getTopics(userId);
+            const loadedMastery = await db.getMastery(userId);
+            setTopics(loadedTopics);
+            setMastery(loadedMastery);
+        };
+        fetchData();
+    }, [userId]);
 
     return (
         <div className="h-[calc(100vh-140px)] flex flex-col gap-6">

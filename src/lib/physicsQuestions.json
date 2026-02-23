@@ -1,0 +1,482 @@
+[
+    {
+        "id": "ph_1",
+        "text": "Path of a coin dropped in a train moving at constant velocity as seen by the person inside.",
+        "type": "choice",
+        "options": [
+            "Parabolic",
+            "Straight line downwards",
+            "Straight line inclined forward",
+            "Circular arc"
+        ],
+        "correctAnswer": "Straight line downwards"
+    },
+    {
+        "id": "ph_1",
+        "text": "Minimum height of a plane mirror to see a full-length image.",
+        "type": "choice",
+        "options": [
+            "Equal to height",
+            "1/4th height",
+            "Half the height",
+            "Double the height"
+        ],
+        "correctAnswer": "Half the height"
+    },
+    {
+        "id": "ph_1",
+        "text": "If A + B + C = 0, these vectors can be represented as:",
+        "type": "choice",
+        "options": [
+            "Sides of a triangle",
+            "Parallel lines",
+            "Sides of a square",
+            "Diagonals of a cube"
+        ],
+        "correctAnswer": "Sides of a triangle"
+    },
+    {
+        "id": "ph_1",
+        "text": "Which pair has the same dimensions?",
+        "type": "choice",
+        "options": [
+            "Force and Power",
+            "Work and Torque",
+            "Pressure and Force",
+            "Momentum and Energy"
+        ],
+        "correctAnswer": "Work and Torque"
+    },
+    {
+        "id": "ph_1",
+        "text": "A ship rises slightly when sailing from river to ocean because:",
+        "type": "choice",
+        "options": [
+            "Ocean is cleaner",
+            "Density is higher",
+            "Ocean is deeper",
+            "Ship moves faster"
+        ],
+        "correctAnswer": "Density is higher"
+    },
+    {
+        "id": "ph_1",
+        "text": "10g ice at 0°C mixed with 10g water at 10°C. Final temperature?",
+        "type": "choice",
+        "options": [
+            "5°C",
+            "10°C",
+            "0°C",
+            "-5°C"
+        ],
+        "correctAnswer": "0°C"
+    },
+    {
+        "id": "ph_1",
+        "text": "If displacement-time graph is a horizontal line, velocity is:",
+        "type": "choice",
+        "options": [
+            "Constant",
+            "Increasing",
+            "Zero",
+            "Decreasing"
+        ],
+        "correctAnswer": "Zero"
+    },
+    {
+        "id": "ph_1",
+        "text": "Bird flies with acceleration a < g inside a hanging wire cage. Reading will:",
+        "type": "choice",
+        "options": [
+            "Increase",
+            "Decrease",
+            "Remain same",
+            "Become zero"
+        ],
+        "correctAnswer": "Remain same"
+    },
+    {
+        "id": "ph_1",
+        "text": "Energy of photon is E. If wavelength is doubled, new energy is:",
+        "type": "choice",
+        "options": [
+            "2E",
+            "E/2",
+            "4E",
+            "E/4"
+        ],
+        "correctAnswer": "E/2"
+    },
+    {
+        "id": "ph_1",
+        "text": "Source of sound moves towards stationary observer. Frequency heard is:",
+        "type": "choice",
+        "options": [
+            "Lower",
+            "Same",
+            "Higher",
+            "Zero"
+        ],
+        "correctAnswer": "Higher"
+    },
+    {
+        "id": "ph_2",
+        "text": "Work done by Force F = (2+x) from x=1 to x=2.",
+        "type": "choice",
+        "options": [
+            "3.5 J",
+            "4.5 J",
+            "2.5 J",
+            "5.5 J"
+        ],
+        "correctAnswer": "3.5 J"
+    },
+    {
+        "id": "ph_2",
+        "text": "Height above Earth surface where g becomes g/9 (R=radius).",
+        "type": "choice",
+        "options": [
+            "R",
+            "2R",
+            "3R",
+            "9R"
+        ],
+        "correctAnswer": "2R"
+    },
+    {
+        "id": "ph_2",
+        "text": "Three 3-ohm resistors in a triangle. Resistance between any two corners?",
+        "type": "choice",
+        "options": [
+            "9 ohm",
+            "1 ohm",
+            "2 ohm",
+            "6 ohm"
+        ],
+        "correctAnswer": "2 ohm"
+    },
+    {
+        "id": "ph_2",
+        "text": "Car at 20m/s on curve of radius 100m. Centripetal acceleration?",
+        "type": "choice",
+        "options": [
+            "2 m/s²",
+            "4 m/s²",
+            "10 m/s²",
+            "40 m/s²"
+        ],
+        "correctAnswer": "4 m/s²"
+    },
+    {
+        "id": "ph_2",
+        "text": "Wire stretched to double its length. Strain produced is:",
+        "type": "choice",
+        "options": [
+            "0.5",
+            "1",
+            "2",
+            "1.5"
+        ],
+        "correctAnswer": "1"
+    },
+    {
+        "id": "ph_2",
+        "text": "Proton enters magnetic field B moving parallel to field lines. Force is:",
+        "type": "choice",
+        "options": [
+            "qvB",
+            "qvB/2",
+            "Zero",
+            "qB/v"
+        ],
+        "correctAnswer": "Zero"
+    },
+    {
+        "id": "ph_2",
+        "text": "Intensity ratio of two waves is 9:1. Amplitude ratio is:",
+        "type": "choice",
+        "options": [
+            "9:1",
+            "81:1",
+            "3:1",
+            "1:3"
+        ],
+        "correctAnswer": "3:1"
+    },
+    {
+        "id": "ph_2",
+        "text": "Energy stored in 10uF capacitor charged to 100V.",
+        "type": "choice",
+        "options": [
+            "0.05 J",
+            "0.5 J",
+            "5 J",
+            "50 J"
+        ],
+        "correctAnswer": "0.05 J"
+    },
+    {
+        "id": "ph_2",
+        "text": "In adiabatic process PV^1.4 = K. The gas is:",
+        "type": "choice",
+        "options": [
+            "Monoatomic",
+            "Diatomic",
+            "Triatomic",
+            "Polyatomic"
+        ],
+        "correctAnswer": "Diatomic"
+    },
+    {
+        "id": "ph_2",
+        "text": "Mass m at velocity v hits stationary mass m elastically. First mass:",
+        "type": "choice",
+        "options": [
+            "Moves at v/2",
+            "Comes to rest",
+            "Moves at 2v",
+            "Rebounds at -v"
+        ],
+        "correctAnswer": "Comes to rest"
+    },
+    {
+        "id": "ph_3",
+        "text": "Angle of string for mass m, charge q in horizontal field E.",
+        "type": "choice",
+        "options": [
+            "tan^-1(mg/qE)",
+            "sin^-1(qE/mg)",
+            "tan^-1(qE/mg)",
+            "cos^-1(qE/mg)"
+        ],
+        "correctAnswer": "tan^-1(qE/mg)"
+    },
+    {
+        "id": "ph_3",
+        "text": "Sphere, Disc, Ring released from top of incline. Which is first?",
+        "type": "choice",
+        "options": [
+            "Ring",
+            "Disc",
+            "Sphere",
+            "All same time"
+        ],
+        "correctAnswer": "Sphere"
+    },
+    {
+        "id": "ph_3",
+        "text": "Lift accelerating upwards at 'a'. New pendulum period T' vs T.",
+        "type": "choice",
+        "options": [
+            "T' > T",
+            "T' < T",
+            "T' = T",
+            "T' = 0"
+        ],
+        "correctAnswer": "T' < T"
+    },
+    {
+        "id": "ph_3",
+        "text": "EMF induced in rod length L rotating at w in field B.",
+        "type": "choice",
+        "options": [
+            "BLw",
+            "BL^2w",
+            "0.5 BL^2w",
+            "2BL^2w"
+        ],
+        "correctAnswer": "0.5 BL^2w"
+    },
+    {
+        "id": "ph_3",
+        "text": "Water flows through horizontal pipe. Where pipe narrows, pressure:",
+        "type": "choice",
+        "options": [
+            "Increases",
+            "Decreases",
+            "Remains same",
+            "Zero"
+        ],
+        "correctAnswer": "Decreases"
+    },
+    {
+        "id": "ph_3",
+        "text": "Rolling without slipping; force F at top of hub. Friction is:",
+        "type": "choice",
+        "options": [
+            "Forward",
+            "Backward",
+            "Zero",
+            "Mass dependent"
+        ],
+        "correctAnswer": "Forward"
+    },
+    {
+        "id": "ph_3",
+        "text": "Phase difference between V and I in LCR at resonance.",
+        "type": "choice",
+        "options": [
+            "pi/2",
+            "pi",
+            "Zero",
+            "pi/4"
+        ],
+        "correctAnswer": "Zero"
+    },
+    {
+        "id": "ph_3",
+        "text": "YDSE: slit distance halved, screen distance doubled. Fringe width:",
+        "type": "choice",
+        "options": [
+            "Same",
+            "Double",
+            "4 times",
+            "Half"
+        ],
+        "correctAnswer": "4 times"
+    },
+    {
+        "id": "ph_3",
+        "text": "Half-life 10 days. Time to decay from 100g to 12.5g.",
+        "type": "choice",
+        "options": [
+            "20 days",
+            "30 days",
+            "40 days",
+            "50 days"
+        ],
+        "correctAnswer": "30 days"
+    },
+    {
+        "id": "ph_3",
+        "text": "Two connected bubbles r1 > r2. Air flows:",
+        "type": "choice",
+        "options": [
+            "r1 to r2",
+            "r2 to r1 (equal)",
+            "r2 to r1 (smaller vanishes)",
+            "No flow"
+        ],
+        "correctAnswer": "r2 to r1 (smaller vanishes)"
+    },
+    {
+        "id": "ph_4",
+        "text": "Angle of pendulum in car accelerating at a = g.",
+        "type": "choice",
+        "options": [
+            "30 deg",
+            "45 deg",
+            "60 deg",
+            "90 deg"
+        ],
+        "correctAnswer": "45 deg"
+    },
+    {
+        "id": "ph_4",
+        "text": "Extra force for belt moving at v with sand falling at rate u.",
+        "type": "choice",
+        "options": [
+            "uv",
+            "2uv",
+            "0.5 uv",
+            "uv^2"
+        ],
+        "correctAnswer": "uv"
+    },
+    {
+        "id": "ph_4",
+        "text": "E-field inside a hollow insulating sphere with surface charge.",
+        "type": "choice",
+        "options": [
+            "sigma/e0",
+            "sigma/2e0",
+            "Zero",
+            "Variable"
+        ],
+        "correctAnswer": "Zero"
+    },
+    {
+        "id": "ph_4",
+        "text": "Resistance across body diagonal of a cube of 12 resistors R.",
+        "type": "choice",
+        "options": [
+            "5/6 R",
+            "3/4 R",
+            "7/12 R",
+            "1 R"
+        ],
+        "correctAnswer": "5/6 R"
+    },
+    {
+        "id": "ph_4",
+        "text": "Time to empty first half of tank vs total time T.",
+        "type": "choice",
+        "options": [
+            "T/2",
+            "T/sqrt(2)",
+            "T(1 - 1/sqrt(2))",
+            "T/sqrt(3)"
+        ],
+        "correctAnswer": "T(1 - 1/sqrt(2))"
+    },
+    {
+        "id": "ph_4",
+        "text": "ICOR of ladder length L sliding against wall/floor.",
+        "type": "choice",
+        "options": [
+            "(0,0)",
+            "(x, y)",
+            "(x/2, y/2)",
+            "Midpoint"
+        ],
+        "correctAnswer": "(x, y)"
+    },
+    {
+        "id": "ph_4",
+        "text": "Mutual Inductance M of concentric loops (R >> r) proportional to:",
+        "type": "choice",
+        "options": [
+            "r/R",
+            "r^2/R",
+            "R^2/r",
+            "r/R^2"
+        ],
+        "correctAnswer": "r^2/R"
+    },
+    {
+        "id": "ph_4",
+        "text": "If source temperature in Carnot cycle increases, efficiency:",
+        "type": "choice",
+        "options": [
+            "Decreases",
+            "Increases",
+            "Same",
+            "100%"
+        ],
+        "correctAnswer": "Increases"
+    },
+    {
+        "id": "ph_4",
+        "text": "Prism angle A, ref index cot(A/2). Min deviation is:",
+        "type": "choice",
+        "options": [
+            "180 - A",
+            "180 - 2A",
+            "90 - A",
+            "2A"
+        ],
+        "correctAnswer": "180 - 2A"
+    },
+    {
+        "id": "ph_4",
+        "text": "Rectangular loop near long straight wire. Net force is:",
+        "type": "choice",
+        "options": [
+            "Zero",
+            "Towards wire",
+            "Away from wire",
+            "Directional"
+        ],
+        "correctAnswer": "Directional"
+    }
+]
